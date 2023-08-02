@@ -9,23 +9,43 @@ from fastapi.security import HTTPBasicCredentials, HTTPBasic
 from passlib.context import CryptContext
 import jwt
 
+app = FastAPI()
+
+origins = [
+    "http://localhost:5173",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 # Replace this with your actual secret key
 SECRET_KEY = "your_secret_key"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+password = "password123"
+hashed_password = pwd_context.hash(password)
+print(hashed_password)
 # Sample user data (replace with your actual user data from the database)
 fake_users_db = {
     "john_doe": {
         "username": "john_doe",
-        "hashed_password": "$2b$12$3R19l1m6Oh.GvHH7sKBfKu4F4Lrl1GNbyLUJ2nXJQO9w2w4oyb1vi",  # Hashed password: "password123"
+        "hashed_password": hashed_password,  # Hashed password: "password123"
     }
 }
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 def verify_password(plain_password, hashed_password):
+    print(pwd_context.verify(plain_password, hashed_password))
     return pwd_context.verify(plain_password, hashed_password)
 
 
@@ -50,9 +70,6 @@ def create_access_token(data: dict):
     to_encode = data.copy()
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
-
-
-app = FastAPI()
 
 origins = ["http://localhost:5173"]  # front-end server
 app.add_middleware(CORSMiddleware, allow_origins=origins, allow_credentials=True, allow_methods=["*"], allow_headers=["*"])

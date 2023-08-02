@@ -17,6 +17,7 @@ export async function processFile(fileData) {
 }
 
 export async function loginUser(username, password) {
+
   const response = await fetch(`${BASE_URL}/users/login`, {
     method: "POST",
     headers: {
