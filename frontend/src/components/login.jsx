@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { uploadFile, loginUser } from "../api";
 import { Container, Card, Form, Button, Image, Col, Row } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
     const [loggedIn, setLoggedIn] = useState(false);
     const [username, setUsername] = useState(""); // Add state for username
     const [password, setPassword] = useState(""); // Add state for password
+    const navigate = useNavigate();
+
     const handleLogin = async () => {
         console.log(username)
         console.log(password)
@@ -23,6 +26,7 @@ const Login = () => {
                 // Set the logged-in state to true if login is successful
                 setLoggedIn(true);
                 alert("Login successful. You can now use the file processing tool.");
+                navigate("/dashboard");
             } else {
                 // If login is unsuccessful, show an error message
                 alert("Login failed. Please check your username and password.");

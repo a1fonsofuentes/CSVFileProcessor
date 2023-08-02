@@ -1,4 +1,4 @@
-from fastapi import FastAPI, File, UploadFile, Depends, HTTPException, APIRouter, status
+from fastapi import FastAPI, File, UploadFile, Depends, HTTPException, APIRouter, status, Header
 from pydantic import BaseModel
 import pandas as pd
 import re
@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBasicCredentials, HTTPBasic
 from passlib.context import CryptContext
 import jwt
+import base64
 
 app = FastAPI()
 
@@ -45,11 +46,12 @@ fake_users_db = {
 
 
 def verify_password(plain_password, hashed_password):
-    print(pwd_context.verify(plain_password, hashed_password))
-    return pwd_context.verify(plain_password, hashed_password)
-
+    result = pwd_context.verify(plain_password, hashed_password)
+    print("Verification Result:", result, flush=True)
+    return result
 
 def get_user(username: str):
+    print(username)
     if username in fake_users_db:
         user_dict = fake_users_db[username]
         return user_dict
@@ -57,18 +59,23 @@ def get_user(username: str):
 
 def authenticate_user(credentials: HTTPBasicCredentials = Depends(HTTPBasic())):
     user = get_user(credentials.username)
+    print("Received credentials type:", type(credentials))  # Add this print statement
     if user is None or not verify_password(credentials.password, user["hashed_password"]):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid credentials",
             headers={"WWW-Authenticate": "Basic"},
         )
+    print(credentials.username)
     return user
 
 
 def create_access_token(data: dict):
+    print("Received data for creating access token:", data)  # Add this print statement
     to_encode = data.copy()
+    print(to_encode)  # Add this print statement
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    print(encoded_jwt)  # Add this print statement
     return encoded_jwt
 
 origins = ["http://localhost:5173"]  # front-end server
@@ -76,9 +83,28 @@ app.add_middleware(CORSMiddleware, allow_origins=origins, allow_credentials=True
 
 router = APIRouter()
 
+def get_credentials(authorization: str = Header(None)):
+    if not authorization:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid credentials",
+            headers={"WWW-Authenticate": "Basic"},
+        )
+    scheme, credentials = authorization.split()
+    if scheme.lower() != "basic":
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid credentials",
+            headers={"WWW-Authenticate": "Basic"},
+        )
+    decoded_credentials = base64.b64decode(credentials).decode("utf-8")
+    username, _, password = decoded_credentials.partition(":")
+    return HTTPBasicCredentials(username=username, password=password)
+
 @router.post("/login", tags=["authentication"])
-async def login(credentials: HTTPBasicCredentials = Depends(authenticate_user)):
-    access_token = create_access_token({"sub": credentials.username})
+async def login(authorization: HTTPBasicCredentials = Depends(get_credentials)):
+    user = authenticate_user(authorization)
+    access_token = create_access_token({"sub": user["username"]})
     return {"access_token": access_token, "token_type": "bearer"}
 
 app.include_router(router, prefix="/users", tags=["users"])
