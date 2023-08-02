@@ -23,9 +23,6 @@ class FileSchema(BaseModel):
     filename: str
     content: bytes
 
-import io
-import pandas as pd
-import re
 
 def process_csv(file_content: bytes = File(...)):
     df = pd.read_csv(io.BytesIO(file_content), skiprows=3)
