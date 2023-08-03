@@ -13,6 +13,7 @@ const Dashboard = () => {
 
     const handleFileUpload = async () => {
         if (!selectedFile) return;
+        setProcessing(true);
         console.log(selectedFile)
         // Check if the user is logged in before processing the file
         if (!localStorage.getItem("user")) {
