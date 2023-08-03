@@ -3,18 +3,22 @@ import { uploadFile } from "../api";
 import { Container, Card, Form, Button, Image, Col, Row } from 'react-bootstrap';
 
 const Dashboard = () => {
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [processing, setProcessing] = useState(false);
-  const [downloadLink, setDownloadLink] = useState(null);
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [processing, setProcessing] = useState(false);
+    const [downloadLink, setDownloadLink] = useState(null);
 
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
   };
 
-  const handleFileUpload = async () => {
-    if (!selectedFile) return;
-
-    setProcessing(true);
+    const handleFileUpload = async () => {
+        if (!selectedFile) return;
+        console.log(selectedFile)
+        // Check if the user is logged in before processing the file
+        if (!localStorage.getItem("user")) {
+            alert("Please log in first to access the file processing tool.");
+            return;
+        }
 
     const formData = new FormData();
     formData.append("file", selectedFile);

@@ -3,10 +3,17 @@ import axios from "axios";
 const BASE_URL = "http://localhost:8000"; // Replace with your FastAPI backend URL
 
 export async function uploadFile(formData) {
-  return await axios.post(`${BASE_URL}/upload/`, formData, {
+  console.log(formData)
+  await axios.post(`${BASE_URL}/upload/`, formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
+  }).then(response =>{
+    console.log(response)
+    return response
+  }).catch(error => {
+    console.error(error)
+    return error
   });
 }
 
