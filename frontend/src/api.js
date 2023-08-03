@@ -8,12 +8,6 @@ export async function uploadFile(formData) {
     headers: {
       "Content-Type": "multipart/form-data",
     },
-  }).then(response =>{
-    console.log(response)
-    return response
-  }).catch(error => {
-    console.error(error)
-    return error
   });
 }
 

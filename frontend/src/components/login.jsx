@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { uploadFile, loginUser } from "../api";
+import { loginUser } from "../api";
 import { Container, Card, Form, Button, Image, Col, Row, Stack } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 

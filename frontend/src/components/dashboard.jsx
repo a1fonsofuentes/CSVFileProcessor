@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { uploadFile } from "../api";
+import { uploadFile } from '../api';
 import { Container, Card, Form, Button, Image, Col, Row, Stack } from 'react-bootstrap';
 
 const Dashboard = () => {
