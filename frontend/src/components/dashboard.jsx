@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { uploadFile } from '../api';
-import { Container, Card, Form, Button, Image, Col, Row, Stack } from 'react-bootstrap';
+import { Container, Card, Form, Button, Image, Col, Row, Stack, Table } from 'react-bootstrap';
+
 
 const Dashboard = () => {
     const [selectedFile, setSelectedFile] = useState(null);
     const [processing, setProcessing] = useState(false);
     const [downloadLink, setDownloadLink] = useState(null);
+    const [processedData, setProcessedData] = useState([]);
+    const [dataProcessed, setDataProcessed] = useState(false);
 
     const handleFileChange = (event) => {
         setSelectedFile(event.target.files[0]);
@@ -14,7 +17,6 @@ const Dashboard = () => {
     const handleFileUpload = async () => {
         if (!selectedFile) return;
         setProcessing(true);
-        console.log(selectedFile)
         // Check if the user is logged in before processing the file
         if (!localStorage.getItem("user")) {
             alert("Please log in first to access the file processing tool.");
@@ -32,6 +34,11 @@ const Dashboard = () => {
                 const blob = new Blob([response.data], { type: contentType });
                 const url = URL.createObjectURL(blob);
                 setDownloadLink(url);
+                const processedArray = response.data.split("\n").map(row => row.split(","));
+                console.log(processedArray)
+                setProcessedData(processedArray);
+                setDataProcessed(true);
+                console.log(dataProcessed)
             }
         } catch (error) {
             console.error(error);
@@ -56,7 +63,7 @@ const Dashboard = () => {
                     <Col xs={12} lg={6}>
                         <Card style={{ backgroundColor: "#ffffff", color: "#333", fontSize: 15, textAlign: "center", padding: "20px" }}>
                             <Card.Title style={{ color: "#27ae60", fontSize: "24px", marginBottom: "10px" }}>
-                                <Stack direction="horizontal" gap={3} style={{justifyContent: "center"}}>
+                                <Stack direction="horizontal" gap={3} style={{ justifyContent: "center" }}>
                                     <Image src="https://app.camiapp.net/assets/Tuerca-eb3d566b.svg" width={"18%"} rounded />
                                     <Image src="https://app.camiapp.net/assets/Logo-8a7d2727.svg" width={"35%"} rounded />
                                 </Stack>
@@ -93,6 +100,33 @@ const Dashboard = () => {
                         </Card>
                     </Col>
                 </Row>
+                {dataProcessed && (
+                    <Row>
+                        <Col sm={12} lg={12}>
+                            <br />
+                            {dataProcessed && (
+                                <Table striped bordered hover>
+                                    <thead>
+                                        <tr>
+                                            {processedData[0].map((header, index) => (
+                                                <th key={index}>{header}</th>
+                                            ))}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {processedData.slice(1).map((row, rowIndex) => (
+                                            <tr key={rowIndex}>
+                                                {row.map((cell, cellIndex) => (
+                                                    <td key={cellIndex}>{cell}</td>
+                                                ))}
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </Table>
+                            )}
+                        </Col>
+                    </Row>
+                )}
             </Container>
         </div>
     );
