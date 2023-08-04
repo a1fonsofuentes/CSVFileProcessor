@@ -35,10 +35,8 @@ const Dashboard = () => {
                 const url = URL.createObjectURL(blob);
                 setDownloadLink(url);
                 const processedArray = response.data.split("\n").map(row => row.split(","));
-                console.log(processedArray)
                 setProcessedData(processedArray);
                 setDataProcessed(true);
-                console.log(dataProcessed)
             }
         } catch (error) {
             console.error(error);
@@ -104,26 +102,24 @@ const Dashboard = () => {
                     <Row>
                         <Col sm={12} lg={12}>
                             <br />
-                            {dataProcessed && (
-                                <Table striped bordered hover>
-                                    <thead>
-                                        <tr>
-                                            {processedData[0].map((header, index) => (
-                                                <th key={index}>{header}</th>
+                            <Table striped bordered hover>
+                                <thead>
+                                    <tr>
+                                        {processedData[0].map((header, index) => (
+                                            <th key={index}>{header}</th>
+                                        ))}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {processedData.slice(1).map((row, rowIndex) => (
+                                        <tr key={rowIndex}>
+                                            {row.map((cell, cellIndex) => (
+                                                <td key={cellIndex}>{cell}</td>
                                             ))}
                                         </tr>
-                                    </thead>
-                                    <tbody>
-                                        {processedData.slice(1).map((row, rowIndex) => (
-                                            <tr key={rowIndex}>
-                                                {row.map((cell, cellIndex) => (
-                                                    <td key={cellIndex}>{cell}</td>
-                                                ))}
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </Table>
-                            )}
+                                    ))}
+                                </tbody>
+                            </Table>
                         </Col>
                     </Row>
                 )}
