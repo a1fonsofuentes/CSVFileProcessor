@@ -98,10 +98,11 @@ const Dashboard = () => {
                         </Card>
                     </Col>
                 </Row>
+                <br />
                 {dataProcessed && (
                     <Row>
-                        <Col sm={12} lg={12}>
-                            <br />
+                        <Col lg={2}></Col>
+                        <Col sm={12} lg={8}>
                             <Table striped bordered hover>
                                 <thead>
                                     <tr>
@@ -121,6 +122,7 @@ const Dashboard = () => {
                                 </tbody>
                             </Table>
                         </Col>
+                        <Col lg={2}></Col>
                     </Row>
                 )}
             </Container>
