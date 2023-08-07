@@ -160,7 +160,7 @@ def process_csv(file_content: bytes = File(...)):
         'Junio': 6,
         'Julio': 7,
         'Agosto': 8,
-        'Septiembre': 9,
+        'Setiembre': 9,
         'Octubre': 10,
         'Noviembre': 11,
         'Diciembre': 12
