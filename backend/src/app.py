@@ -34,7 +34,6 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 password = "password123"
 hashed_password = pwd_context.hash(password)
-print(hashed_password)
 # Sample user data (replace with your actual user data from the database)
 fake_users_db = {
     "john_doe": {

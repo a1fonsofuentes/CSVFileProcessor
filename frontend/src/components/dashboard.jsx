@@ -59,72 +59,84 @@ const Dashboard = () => {
             <Container>
                 <Row className="justify-content-md-center">
                     <Col>
-                        <Card style={{ backgroundColor: "#ffffff", color: "#333", fontSize: 15, textAlign: "center", padding: "20px", borderRadius: '10px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)', }}>
-                            <Card.Title style={{ color: "#27ae60", fontSize: "24px", marginBottom: "10px" }}>
-                                <Stack direction="horizontal" gap={3} style={{ justifyContent: "center" }}>
-                                    <Image src="https://app.camiapp.net/assets/Tuerca-eb3d566b.svg" width={"15%"} rounded />
-                                    <Image src="https://app.camiapp.net/assets/Logo-8a7d2727.svg" width={"25%"} rounded />
-                                </Stack>
-                                <br />
-                                CVS File Processor
-                            </Card.Title>
-                            <Card.Subtitle style={{ color: "#27ae60", fontSize: "16px", marginBottom: "20px" }}>
-                                Upload your file, and download the processed data
-                            </Card.Subtitle>
-                            <Card.Text>
-                                <Container style={{ width: "70%" }}>
-                                    <Form.Control
-                                        type='file'
-                                        onChange={handleFileChange}
-                                    />
-                                </Container>
-                                <br />
-                                <Button
-                                    onClick={handleFileUpload}
-                                    variant="success"
-                                    disabled={processing}
-                                    style={{ width: "50%" }}
-                                >
-                                    {processing ? "Processing..." : "Upload & Process"}
-                                </Button>
-                                <br />
-                                <br />
-                                {downloadLink && (
+                        <Container style={{ width: "60%"}}>
+                            <Card style={{ backgroundColor: "#ffffff", color: "#333", fontSize: 15, textAlign: "center", padding: "20px", borderRadius: '10px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',}}>
+                                <Card.Title style={{ color: "#27ae60", fontSize: "24px", marginBottom: "10px" }}>
+                                    <Stack direction="horizontal" gap={3} style={{ justifyContent: "center" }}>
+                                        <Image src="https://app.camiapp.net/assets/Tuerca-eb3d566b.svg" width={"15%"} rounded />
+                                        <Image src="https://app.camiapp.net/assets/Logo-8a7d2727.svg" width={"25%"} rounded />
+                                    </Stack>
+                                    <br />
+                                    CVS File Processor
+                                </Card.Title>
+                                <Card.Subtitle style={{ color: "#27ae60", fontSize: "16px", marginBottom: "20px" }}>
+                                    Upload your file, and download the processed data
+                                </Card.Subtitle>
+                                <Card.Text>
+                                    <Container style={{ width: "40%" }}>
+                                        <Form.Control
+                                            type='file'
+                                            onChange={handleFileChange}
+                                        />
+                                    </Container>
+                                    <br />
                                     <Button
-                                        onClick={handleDownload}
+                                        onClick={handleFileUpload}
                                         variant="success"
-                                        className="mt-3"
+                                        disabled={processing}
                                         style={{ width: "50%" }}
                                     >
-                                        Download Processed CSV
+                                        {processing ? "Processing..." : "Upload & Process"}
                                     </Button>
-                                )}
-                            </Card.Text>
-                        </Card>
+                                    <br />
+                                    <br />
+                                    {downloadLink && (
+                                        <Button
+                                            onClick={handleDownload}
+                                            variant="success"
+                                            className="mt-3"
+                                            style={{ width: "50%" }}
+                                        >
+                                            Download Processed CSV
+                                        </Button>
+                                    )}
+                                </Card.Text>
+                            </Card>
+                        </Container>
                     </Col>
                 </Row>
                 <br />
                 {dataProcessed && (
                     <Row className="justify-content-md-center">
                         <Col>
-                            <Table striped hover variant='dark'>
-                                <thead>
-                                    <tr>
-                                        {processedData[0].map((header, index) => (
-                                            <th key={index}>{header}</th>
-                                        ))}
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {processedData.slice(1).map((row, rowIndex) => (
-                                        <tr key={rowIndex}>
-                                            {row.map((cell, cellIndex) => (
-                                                <td key={cellIndex}>{cell}</td>
+                            <Card style={{ backgroundColor: "#ffffff", color: "#333", fontSize: 15, textAlign: "center", padding: "20px", borderRadius: '10px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)', }}>
+                                <Card.Title style={{ color: "#27ae60", fontSize: "24px", marginBottom: "10px" }}>
+                                    Your processed File
+                                </Card.Title>
+                                <Card.Subtitle style={{ color: "#27ae60", fontSize: "16px", marginBottom: "20px" }}>
+                                    You can visualize your new file here before download
+                                </Card.Subtitle>
+                                <Card.Text>
+                                    <Table striped hover variant='dark'>
+                                        <thead>
+                                            <tr>
+                                                {processedData[0].map((header, index) => (
+                                                    <th key={index}>{header}</th>
+                                                ))}
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {processedData.slice(1).map((row, rowIndex) => (
+                                                <tr key={rowIndex}>
+                                                    {row.map((cell, cellIndex) => (
+                                                        <td key={cellIndex}>{cell}</td>
+                                                    ))}
+                                                </tr>
                                             ))}
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </Table>
+                                        </tbody>
+                                    </Table>
+                                </Card.Text>
+                            </Card>
                         </Col>
                     </Row>
                 )}
