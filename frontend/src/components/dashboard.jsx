@@ -55,61 +55,59 @@ const Dashboard = () => {
     };
 
     return (
-        <div style={{ backgroundColor: "#f0f0f0", minHeight: "100vh", padding: "20px" }}>
+        <div style={{ backgroundColor: "#3E6A51", minHeight: "100vh", padding: "20px" }}>
             <Container>
                 <Row className="justify-content-md-center">
                     <Col>
-                        <Container style={{ width: "60%"}}>
-                            <Card style={{ backgroundColor: "#ffffff", color: "#333", fontSize: 15, textAlign: "center", padding: "20px", borderRadius: '10px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',}}>
-                                <Card.Title style={{ color: "#27ae60", fontSize: "24px", marginBottom: "10px" }}>
-                                    <Stack direction="horizontal" gap={3} style={{ justifyContent: "center" }}>
-                                        <Image src="https://app.camiapp.net/assets/Tuerca-eb3d566b.svg" width={"15%"} rounded />
-                                        <Image src="https://app.camiapp.net/assets/Logo-8a7d2727.svg" width={"25%"} rounded />
-                                    </Stack>
-                                    <br />
-                                    CVS File Processor
-                                </Card.Title>
-                                <Card.Subtitle style={{ color: "#27ae60", fontSize: "16px", marginBottom: "20px" }}>
-                                    Upload your file, and download the processed data
-                                </Card.Subtitle>
-                                <Card.Text>
-                                    <Container style={{ width: "40%" }}>
-                                        <Form.Control
-                                            type='file'
-                                            onChange={handleFileChange}
-                                        />
-                                    </Container>
-                                    <br />
+                        <Card style={{ backgroundColor: "#ffffff", color: "#333", fontSize: 15, textAlign: "center", padding: "20px", borderRadius: '10px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)', }}>
+                            <Card.Title style={{ color: "#27ae60", fontSize: "24px", marginBottom: "10px" }}>
+                                <Stack direction="horizontal" gap={3} style={{ justifyContent: "center" }}>
+                                    <Image src="https://app.camiapp.net/assets/Tuerca-eb3d566b.svg" width={"15%"} rounded />
+                                    <Image src="https://app.camiapp.net/assets/Logo-8a7d2727.svg" width={"25%"} rounded />
+                                </Stack>
+                                <br />
+                                CVS File Processor
+                            </Card.Title>
+                            <Card.Subtitle style={{ color: "#27ae60", fontSize: "16px", marginBottom: "20px" }}>
+                                Upload your file, and download the processed data
+                            </Card.Subtitle>
+                            <Card.Text>
+                                <Container style={{ width: "23%" }}>
+                                    <Form.Control
+                                        type='file'
+                                        onChange={handleFileChange}
+                                    />
+                                </Container>
+                                <br />
+                                <Button
+                                    onClick={handleFileUpload}
+                                    variant="success"
+                                    disabled={processing}
+                                    style={{ width: "50%" }}
+                                >
+                                    {processing ? "Processing..." : "Upload & Process"}
+                                </Button>
+                                <br />
+                                <br />
+                                {downloadLink && (
                                     <Button
-                                        onClick={handleFileUpload}
+                                        onClick={handleDownload}
                                         variant="success"
-                                        disabled={processing}
+                                        className="mt-3"
                                         style={{ width: "50%" }}
                                     >
-                                        {processing ? "Processing..." : "Upload & Process"}
+                                        Download Processed CSV
                                     </Button>
-                                    <br />
-                                    <br />
-                                    {downloadLink && (
-                                        <Button
-                                            onClick={handleDownload}
-                                            variant="success"
-                                            className="mt-3"
-                                            style={{ width: "50%" }}
-                                        >
-                                            Download Processed CSV
-                                        </Button>
-                                    )}
-                                </Card.Text>
-                            </Card>
-                        </Container>
+                                )}
+                            </Card.Text>
+                        </Card>
                     </Col>
                 </Row>
                 <br />
                 {dataProcessed && (
                     <Row className="justify-content-md-center">
                         <Col>
-                            <Card style={{ backgroundColor: "#ffffff", color: "#333", fontSize: 15, textAlign: "center", padding: "20px", borderRadius: '10px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)', }}>
+                            <Card style={{ backgroundColor: "#ffffff", color: "#0F4526", fontSize: 15, textAlign: "center", padding: "20px", borderRadius: '10px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)', }}>
                                 <Card.Title style={{ color: "#27ae60", fontSize: "24px", marginBottom: "10px" }}>
                                     Your processed File
                                 </Card.Title>
