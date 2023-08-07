@@ -211,12 +211,13 @@ def process_csv(file_content: bytes = File(...)):
     final_df['TOTAL Tipo de Venta'] = final_df['TOTAL Tipo de Venta'].fillna('– TOTAL DEL MES – ')
 
     final_df.reset_index(drop=True, inplace=True)
-    print(final_df.columns)
+    
     final_df['Cuenta'] = final_df['Cuenta'].str.replace(',', '')
     final_df['Monto Facturación'] = final_df['Monto Facturación'].round(2)
     final_df['Costo Detalle  Facturación'] = final_df['Costo Detalle  Facturación'].round(2)
     final_df['Utilidad'] = final_df['Utilidad'].round(2)
     final_df['Margen %'] = final_df['Margen %'].round(2)
+    final_df['Mes Detalle'] = final_df['Mes Detalle'].astype(int)
 
     # Instead of using io.BytesIO, we use io.StringIO for CSV processing
     processed_data_buffer = io.StringIO()
