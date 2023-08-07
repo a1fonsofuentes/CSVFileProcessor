@@ -10,8 +10,6 @@ const Login = () => {
     const navigate = useNavigate();
 
     const handleLogin = async () => {
-        console.log(username)
-        console.log(password)
         try {
             // Check if both username and password are provided
             if (!username || !password) {

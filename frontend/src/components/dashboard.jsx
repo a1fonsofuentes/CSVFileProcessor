@@ -58,7 +58,7 @@ const Dashboard = () => {
         <div style={{ backgroundColor: "#f0f0f0", minHeight: "100vh", padding: "20px" }}>
             <Container>
                 <Row className="justify-content-md-center">
-                    <Col xs={12} lg={6}>
+                    <Col>
                         <Card style={{ backgroundColor: "#ffffff", color: "#333", fontSize: 15, textAlign: "center", padding: "20px" }}>
                             <Card.Title style={{ color: "#27ae60", fontSize: "24px", marginBottom: "10px" }}>
                                 <Stack direction="horizontal" gap={3} style={{ justifyContent: "center" }}>
@@ -71,9 +71,9 @@ const Dashboard = () => {
                             <Card.Subtitle style={{ color: "#27ae60", fontSize: "16px", marginBottom: "20px" }}>
                                 Upload your file, and download the processed data
                             </Card.Subtitle>
-                            <Form>
+                            <Card.Text>
                                 <Form.Control
-                                    type="file"
+                                    type='file'
                                     onChange={handleFileChange}
                                 />
                                 <Button
@@ -84,6 +84,8 @@ const Dashboard = () => {
                                 >
                                     {processing ? "Processing..." : "Upload & Process"}
                                 </Button>
+                                <br />
+                                <br />
                                 {downloadLink && (
                                     <Button
                                         onClick={handleDownload}
@@ -94,16 +96,15 @@ const Dashboard = () => {
                                         Download Processed CSV
                                     </Button>
                                 )}
-                            </Form>
+                            </Card.Text>
                         </Card>
                     </Col>
                 </Row>
                 <br />
                 {dataProcessed && (
-                    <Row>
-                        <Col lg={2}></Col>
-                        <Col sm={12} lg={8}>
-                            <Table striped bordered hover>
+                    <Row className="justify-content-md-center">
+                        <Col>
+                            <Table striped hover variant='dark'>
                                 <thead>
                                     <tr>
                                         {processedData[0].map((header, index) => (
@@ -122,7 +123,6 @@ const Dashboard = () => {
                                 </tbody>
                             </Table>
                         </Col>
-                        <Col lg={2}></Col>
                     </Row>
                 )}
             </Container>
