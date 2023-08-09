@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { uploadFile } from '../api';
-import { Container, Card, Form, Button, Image, Col, Row, Stack, Table } from 'react-bootstrap';
+import { Container, Card, Form, Button, Image, Col, Row, Stack, Table, Nav, Accordion } from 'react-bootstrap';
 
 
 const Dashboard = () => {
@@ -9,6 +9,9 @@ const Dashboard = () => {
     const [downloadLink, setDownloadLink] = useState(null);
     const [processedData, setProcessedData] = useState([]);
     const [dataProcessed, setDataProcessed] = useState(false);
+    const [nav, setNav] = useState(false)
+    const years = [2020, 2021, 2022]
+
 
     const handleFileChange = (event) => {
         setSelectedFile(event.target.files[0]);
@@ -37,6 +40,7 @@ const Dashboard = () => {
                 const processedArray = response.data.split("\n").map(row => row.split(","));
                 setProcessedData(processedArray);
                 setDataProcessed(true);
+                console.log(processedArray)
             }
         } catch (error) {
             console.error(error);
@@ -54,6 +58,14 @@ const Dashboard = () => {
         }
     };
 
+    const handleTabSelect = (selectedKey) => {
+        if (selectedKey === 'file') {
+            setNav(false);
+        } else if (selectedKey === 'linkHistorico') {
+            setNav(true);
+        }
+    };
+
     return (
         <div style={{ backgroundColor: "#3E6A51", minHeight: "100vh", padding: "20px" }}>
             <Container>
@@ -66,7 +78,7 @@ const Dashboard = () => {
                                     <Image src="https://app.camiapp.net/assets/Logo-8a7d2727.svg" width={"25%"} rounded />
                                 </Stack>
                                 <br />
-                                CVS File Processor
+                                CSV File Processor
                             </Card.Title>
                             <Card.Subtitle style={{ color: "#27ae60", fontSize: "16px", marginBottom: "20px" }}>
                                 Upload your file, and download the processed data
@@ -104,37 +116,104 @@ const Dashboard = () => {
                     </Col>
                 </Row>
                 <br />
-                {dataProcessed && (
+                <Row>
+                    <Col>
+                        <Nav variant="tabs" defaultActiveKey={'file'} onSelect={handleTabSelect}>
+                            <Nav.Item>
+                                <Nav.Link eventKey={'file'} style={{ color: (!nav ? '#1F3528' : '#B1C3B9'), }}>Visualizar Archivo Procesado</Nav.Link>
+                            </Nav.Item>
+                            <Nav.Item>
+                                <Nav.Link eventKey={'linkHistorico'} style={{ color: (nav ? '#1F3528' : '#B1C3B9'), }}>Historico</Nav.Link>
+                            </Nav.Item>
+                        </Nav>
+                    </Col>
+                </Row>
+                {nav && (
+                    <Row>
+                        <Col className="justify-content-md-center">
+                            <Card style={{ backgroundColor: "#ffffff", color: "#333", fontSize: 15, textAlign: "center", padding: "20px", borderRadius: '10px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)', }}>
+                                <Card.Title style={{ color: "#27ae60", fontSize: "24px", marginBottom: "10px" }}>
+                                    Lista de archivos procesados
+                                </Card.Title>
+                                <Card.Body>
+                                    <Form.Select size="sm">
+                                        {years.map((item, index) => (<option value={index}>{item}</option>))}
+                                    </Form.Select>
+                                    <br />
+                                    <Accordion flush>
+                                        <Accordion.Item eventKey="0">
+                                            <Accordion.Header>Update fecha 25/06/2023</Accordion.Header>
+                                            <Accordion.Body>
+                                                {/* <Table striped hover variant='dark'>
+                                                    <thead>
+                                                        <tr>
+                                                            {processedData[0].map((header, index) => (
+                                                                <th key={index}>{header}</th>
+                                                            ))}
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {processedData.slice(1).map((row, rowIndex) => (
+                                                            <tr key={rowIndex}>
+                                                                {row.map((cell, cellIndex) => (
+                                                                    <td key={cellIndex} style={{ color: '#B1C3B9' }}>{cell}</td>
+                                                                ))}
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </Table> */}
+                                            </Accordion.Body>
+                                        </Accordion.Item>
+                                        <Accordion.Item eventKey="1">
+                                            <Accordion.Header>Update fecha 02/02/2023</Accordion.Header>
+                                            <Accordion.Body>
+                                                {/* <Table striped hover variant='dark'>
+                                                    <thead>
+                                                        <tr>
+                                                            {processedData[0].map((header, index) => (
+                                                                <th key={index}>{header}</th>
+                                                            ))}
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {processedData.slice(1).map((row, rowIndex) => (
+                                                            <tr key={rowIndex}>
+                                                                {row.map((cell, cellIndex) => (
+                                                                    <td key={cellIndex} style={{ color: '#B1C3B9' }}>{cell}</td>
+                                                                ))}
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </Table> */}
+                                            </Accordion.Body>
+                                        </Accordion.Item>
+                                    </Accordion>
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                    </Row>
+                )}
+                {dataProcessed && !nav && (
                     <Row className="justify-content-md-center">
                         <Col>
-                            <Card style={{ backgroundColor: "#ffffff", color: "#0F4526", fontSize: 15, textAlign: "center", padding: "20px", borderRadius: '10px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)', }}>
-                                <Card.Title style={{ color: "#27ae60", fontSize: "24px", marginBottom: "10px" }}>
-                                    Your processed File
-                                </Card.Title>
-                                <Card.Subtitle style={{ color: "#27ae60", fontSize: "16px", marginBottom: "20px" }}>
-                                    You can visualize your new file here before download
-                                </Card.Subtitle>
-                                <Card.Text>
-                                    <Table striped hover variant='dark'>
-                                        <thead>
-                                            <tr>
-                                                {processedData[0].map((header, index) => (
-                                                    <th key={index}>{header}</th>
-                                                ))}
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {processedData.slice(1).map((row, rowIndex) => (
-                                                <tr key={rowIndex}>
-                                                    {row.map((cell, cellIndex) => (
-                                                        <td key={cellIndex}>{cell}</td>
-                                                    ))}
-                                                </tr>
+                            <Table striped hover variant='dark'>
+                                <thead>
+                                    <tr>
+                                        {processedData[0].map((header, index) => (
+                                            <th key={index}>{header}</th>
+                                        ))}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {processedData.slice(1).map((row, rowIndex) => (
+                                        <tr key={rowIndex}>
+                                            {row.map((cell, cellIndex) => (
+                                                <td key={cellIndex} style={{ color: '#B1C3B9' }}>{cell}</td>
                                             ))}
-                                        </tbody>
-                                    </Table>
-                                </Card.Text>
-                            </Card>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </Table>
                         </Col>
                     </Row>
                 )}
