@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { uploadFile } from '../api';
+import { Bounce, Slide, toast, } from 'react-toastify';
 import { Container, Card, Form, Button, Image, Col, Row, Stack, Table, Nav, Accordion } from 'react-bootstrap';
+import Spinner from 'react-bootstrap/Spinner';
 
 
 const Dashboard = () => {
@@ -18,6 +20,7 @@ const Dashboard = () => {
     };
 
     const handleFileUpload = async () => {
+        toast.info('Processing...', { autoClose: 6000 });
         if (!selectedFile) return;
         setProcessing(true);
         // Check if the user is logged in before processing the file
@@ -40,9 +43,25 @@ const Dashboard = () => {
                 const processedArray = response.data.split("\n").map(row => row.split(","));
                 setProcessedData(processedArray);
                 setDataProcessed(true);
+                toast.success("success", {
+                    position: toast.POSITION.TOP_RIGHT,
+                    autoClose: 3000, //3 seconds
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    transition: Slide
+                });
                 console.log(processedArray)
             }
         } catch (error) {
+            toast.error(error, {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 3000, //3 seconds
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                transition: Bounce
+            });
             console.error(error);
         } finally {
             setProcessing(false);
@@ -193,33 +212,40 @@ const Dashboard = () => {
                         </Col>
                     </Row>
                 )}
-                {dataProcessed && !nav && (
-                    <Row className="justify-content-md-center">
-                        <Col>
-                            <Table striped hover variant='dark'>
-                                <thead>
-                                    <tr>
-                                        {processedData[0].map((header, index) => (
-                                            <th key={index}>{header}</th>
-                                        ))}
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {processedData.slice(1).map((row, rowIndex) => (
-                                        <tr key={rowIndex}>
-                                            {row.map((cell, cellIndex) => (
-                                                <td key={cellIndex} style={{ color: '#B1C3B9' }}>{cell}</td>
+                {processing ? (
+                    <div className="text-center">
+                        <br /><br /><br /><Spinner animation="border" variant="warning" />
+                    </div>
+                ) : (
+                    dataProcessed && !nav && (
+                        <Row className="justify-content-md-center">
+                            <Col>
+                                <Table striped hover variant="dark">
+                                    <Table striped hover variant='dark'>
+                                        <thead>
+                                            <tr>
+                                                {processedData[0].map((header, index) => (
+                                                    <th key={index}>{header}</th>
+                                                ))}
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {processedData.slice(1).map((row, rowIndex) => (
+                                                <tr key={rowIndex}>
+                                                    {row.map((cell, cellIndex) => (
+                                                        <td key={cellIndex} style={{ color: '#B1C3B9' }}>{cell}</td>
+                                                    ))}
+                                                </tr>
                                             ))}
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </Table>
-                        </Col>
-                    </Row>
+                                        </tbody>
+                                    </Table>
+                                </Table>
+                            </Col>
+                        </Row>
+                    )
                 )}
             </Container>
         </div>
     );
 }
-
 export default Dashboard;
