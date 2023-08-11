@@ -149,7 +149,7 @@ def process_csv(file_content: bytes = File(...)):
     new_df['Monto Facturación'] = new_df['Monto Facturación'].apply(extract_number)
     new_df['Costo Detalle  Facturación'] = new_df['Costo Detalle  Facturación'].apply(extract_number)
 
-    main_df = new_df.drop(columns=['Año', 'País', 'Línea Factura', 'Oportunidad (Producto Oportunidad)', 'Producto Oportunidad', 'Servicios (Producto Oportunidad)', 'Probabilidad (Oportunidad)', 'Industria (Cuenta)', 'Sub Categoría (Cuenta)', 'Propietario (Oportunidad)', 'Propietario', 'Estado (Oportunidad)'])
+    main_df = new_df.drop(columns=['País', 'Línea Factura', 'Oportunidad (Producto Oportunidad)', 'Producto Oportunidad', 'Servicios (Producto Oportunidad)', 'Probabilidad (Oportunidad)', 'Industria (Cuenta)', 'Sub Categoría (Cuenta)', 'Propietario (Oportunidad)', 'Propietario', 'Estado (Oportunidad)'])
 
     month_mapping = {
         'Enero': 1,
@@ -169,7 +169,7 @@ def process_csv(file_content: bytes = File(...)):
     main_df['Mes Detalle'] = main_df['Mes'].str.split('-').str[1]
     main_df['Mes Detalle'] = main_df['Mes Detalle'].map(month_mapping)
 
-    final_df = main_df.groupby(['Mes Detalle', 'Tipo de Venta (Producto Oportunidad)', 'Producto (Producto Oportunidad)', 'Cuenta']).agg({
+    final_df = main_df.groupby(['Año', 'Mes Detalle', 'Tipo de Venta (Producto Oportunidad)', 'Producto (Producto Oportunidad)', 'Cuenta']).agg({
         'Monto Facturación': 'sum',
         'Costo Detalle  Facturación': 'sum'
     }).reset_index()

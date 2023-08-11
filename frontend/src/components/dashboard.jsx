@@ -30,7 +30,7 @@ const Dashboard = () => {
             alert("Please log in first to access the file processing tool.");
             return;
         }
-
+ 
         const formData = new FormData();
         formData.append("file", selectedFile);
 
