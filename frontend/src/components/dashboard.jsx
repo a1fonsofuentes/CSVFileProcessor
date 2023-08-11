@@ -3,6 +3,8 @@ import { uploadFile } from '../api';
 import { Bounce, Slide, toast, } from 'react-toastify';
 import { Container, Card, Form, Button, Image, Col, Row, Stack, Table, Nav, Accordion } from 'react-bootstrap';
 import Spinner from 'react-bootstrap/Spinner';
+import Historico from './historico';
+import supabase from './db';
 
 
 const Dashboard = () => {
@@ -20,7 +22,7 @@ const Dashboard = () => {
     };
 
     const handleFileUpload = async () => {
-        toast.info('Processing...', { autoClose: 6000 });
+        toast.info('Processing...', { autoClose: 6000, toastId: 'toast' });
         if (!selectedFile) return;
         setProcessing(true);
         // Check if the user is logged in before processing the file
@@ -43,16 +45,50 @@ const Dashboard = () => {
                 const processedArray = response.data.split("\n").map(row => row.split(","));
                 setProcessedData(processedArray);
                 setDataProcessed(true);
-                toast.success("success", {
-                    position: toast.POSITION.TOP_RIGHT,
-                    autoClose: 3000, //3 seconds
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    transition: Slide
-                });
-                console.log(processedArray)
             }
+            for (let rowIndex = 1; rowIndex < processedData.length; rowIndex++) {
+                const row = processedData[rowIndex];
+                const { data, error } = await supabase
+                    .from('data')
+                    .insert([
+                        {
+                            fecha: row[0],
+                            total_tipo_venta: row[1],
+                            producto: row[2],
+                            cuenta: row[3],
+                            monto_facturacion: row[4],
+                            costo_detalle_facturacion: row[5],
+                            utilidad: row[6],
+                            margin: row[7],
+                        },
+                    ]);
+
+                if (error) {
+                    console.error('Error inserting row:', error);
+                    toast.error(error, {
+                        position: toast.POSITION.TOP_RIGHT,
+                        autoClose: 3000, //3 seconds
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        transition: Bounce
+                    });
+                    // Handle error
+                } else {
+                    console.log('Row inserted:', data);
+                    toast.update('toast', {
+                        render: 'success',
+                        type: toast.TYPE.SUCCESS,
+                        position: toast.POSITION.TOP_RIGHT,
+                        autoClose: 3000, //3 seconds
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        transition: Slide
+                    });
+                }
+            }
+
         } catch (error) {
             toast.error(error, {
                 position: toast.POSITION.TOP_RIGHT,
@@ -148,69 +184,7 @@ const Dashboard = () => {
                     </Col>
                 </Row>
                 {nav && (
-                    <Row>
-                        <Col className="justify-content-md-center">
-                            <Card style={{ backgroundColor: "#ffffff", color: "#333", fontSize: 15, textAlign: "center", padding: "20px", borderRadius: '10px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)', }}>
-                                <Card.Title style={{ color: "#27ae60", fontSize: "24px", marginBottom: "10px" }}>
-                                    Lista de archivos procesados
-                                </Card.Title>
-                                <Card.Body>
-                                    <Form.Select size="sm">
-                                        {years.map((item, index) => (<option value={index}>{item}</option>))}
-                                    </Form.Select>
-                                    <br />
-                                    <Accordion flush>
-                                        <Accordion.Item eventKey="0">
-                                            <Accordion.Header>Update fecha 25/06/2023</Accordion.Header>
-                                            <Accordion.Body>
-                                                {/* <Table striped hover variant='dark'>
-                                                    <thead>
-                                                        <tr>
-                                                            {processedData[0].map((header, index) => (
-                                                                <th key={index}>{header}</th>
-                                                            ))}
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        {processedData.slice(1).map((row, rowIndex) => (
-                                                            <tr key={rowIndex}>
-                                                                {row.map((cell, cellIndex) => (
-                                                                    <td key={cellIndex} style={{ color: '#B1C3B9' }}>{cell}</td>
-                                                                ))}
-                                                            </tr>
-                                                        ))}
-                                                    </tbody>
-                                                </Table> */}
-                                            </Accordion.Body>
-                                        </Accordion.Item>
-                                        <Accordion.Item eventKey="1">
-                                            <Accordion.Header>Update fecha 02/02/2023</Accordion.Header>
-                                            <Accordion.Body>
-                                                {/* <Table striped hover variant='dark'>
-                                                    <thead>
-                                                        <tr>
-                                                            {processedData[0].map((header, index) => (
-                                                                <th key={index}>{header}</th>
-                                                            ))}
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        {processedData.slice(1).map((row, rowIndex) => (
-                                                            <tr key={rowIndex}>
-                                                                {row.map((cell, cellIndex) => (
-                                                                    <td key={cellIndex} style={{ color: '#B1C3B9' }}>{cell}</td>
-                                                                ))}
-                                                            </tr>
-                                                        ))}
-                                                    </tbody>
-                                                </Table> */}
-                                            </Accordion.Body>
-                                        </Accordion.Item>
-                                    </Accordion>
-                                </Card.Body>
-                            </Card>
-                        </Col>
-                    </Row>
+                    <Historico />
                 )}
                 {processing ? (
                     <div className="text-center">
@@ -242,8 +216,7 @@ const Dashboard = () => {
                                 </Table>
                             </Col>
                         </Row>
-                    )
-                )}
+                    ))}
             </Container>
         </div>
     );
