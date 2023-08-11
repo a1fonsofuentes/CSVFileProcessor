@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { uploadFile } from '../api';
 import { Bounce, Slide, toast, } from 'react-toastify';
 import { Container, Card, Form, Button, Image, Col, Row, Stack, Table, Nav, Accordion } from 'react-bootstrap';
@@ -37,58 +37,75 @@ const Dashboard = () => {
         try {
             const response = await uploadFile(formData);
 
-            if (response.status === 200) {
-                const contentType = response.headers.get("content-type");
-                const blob = new Blob([response.data], { type: contentType });
-                const url = URL.createObjectURL(blob);
-                setDownloadLink(url);
-                const processedArray = response.data.split("\n").map(row => row.split(","));
-                setProcessedData(processedArray);
-                setDataProcessed(true);
-            }
-            for (let rowIndex = 1; rowIndex < processedData.length; rowIndex++) {
-                const row = processedData[rowIndex];
-                const { data, error } = await supabase
-                    .from('data')
-                    .insert([
-                        {
-                            fecha: row[0],
-                            total_tipo_venta: row[1],
-                            producto: row[2],
-                            cuenta: row[3],
-                            monto_facturacion: row[4],
-                            costo_detalle_facturacion: row[5],
-                            utilidad: row[6],
-                            margin: row[7],
-                        },
-                    ]);
+            const controllerResponse = await supabase
+                .from('controller')
+                .insert([{}]).select();
+            if (controllerResponse.error) {
+                console.error('Error inserting row:', error);
+                toast.error(error, {
+                    position: toast.POSITION.TOP_RIGHT,
+                    autoClose: 3000, //3 seconds
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    transition: Bounce
+                });
+            } else {
+                console.log(controllerResponse)
+                const controllerId = controllerResponse.data[0].id;
+                for (let rowIndex = 1; rowIndex < processedData.length; rowIndex++) {
+                    const row = processedData[rowIndex];
+                    const { data, error } = await supabase
+                        .from('data')
+                        .insert([
+                            {
+                                year: row[0],
+                                month: row[1],
+                                total_tipo_venta: row[2],
+                                producto: row[3],
+                                cuenta: row[4],
+                                monto_facturacion: row[5],
+                                costo_detalle_facturacion: row[6],
+                                utilidad: row[7],
+                                margin: row[8],
+                                upload: controllerId
+                            },
+                        ]);
 
-                if (error) {
-                    console.error('Error inserting row:', error);
-                    toast.error(error, {
-                        position: toast.POSITION.TOP_RIGHT,
-                        autoClose: 3000, //3 seconds
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        transition: Bounce
-                    });
-                    // Handle error
-                } else {
-                    console.log('Row inserted:', data);
-                    toast.update('toast', {
-                        render: 'success',
-                        type: toast.TYPE.SUCCESS,
-                        position: toast.POSITION.TOP_RIGHT,
-                        autoClose: 3000, //3 seconds
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        transition: Slide
-                    });
+                    if (error) {
+                        console.error('Error inserting row:', error);
+                        toast.error(error, {
+                            position: toast.POSITION.TOP_RIGHT,
+                            autoClose: 3000, //3 seconds
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            transition: Bounce
+                        });
+                    } else {
+                        console.log('Row inserted:', data);
+                        toast.update('toast', {
+                            render: 'success',
+                            type: toast.TYPE.SUCCESS,
+                            position: toast.POSITION.TOP_RIGHT,
+                            autoClose: 3000, //3 seconds
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            transition: Slide
+                        });
+                    }
+                }
+                if (response.status === 200) {
+                    const contentType = response.headers.get("content-type");
+                    const blob = new Blob([response.data], { type: contentType });
+                    const url = URL.createObjectURL(blob);
+                    setDownloadLink(url);
+                    const processedArray = response.data.split("\n").map(row => row.split(","));
+                    setProcessedData(processedArray);
+                    setDataProcessed(true);
                 }
             }
-
         } catch (error) {
             toast.error(error, {
                 position: toast.POSITION.TOP_RIGHT,
