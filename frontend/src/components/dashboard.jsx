@@ -36,7 +36,15 @@ const Dashboard = () => {
 
         try {
             const response = await uploadFile(formData);
-
+            if (response.status === 200) {
+                const contentType = response.headers.get("content-type");
+                const blob = new Blob([response.data], { type: contentType });
+                const url = URL.createObjectURL(blob);
+                setDownloadLink(url);
+                const processedArray = response.data.split("\n").map(row => row.split(","));
+                setProcessedData(processedArray);
+                setDataProcessed(true);
+            }
             const controllerResponse = await supabase
                 .from('controller')
                 .insert([{}]).select();
@@ -74,7 +82,9 @@ const Dashboard = () => {
 
                     if (error) {
                         console.error('Error inserting row:', error);
-                        toast.error(error, {
+                        toast.update('toast', {
+                            render: error,
+                            type: toast.TYPE.ERROR,
                             position: toast.POSITION.TOP_RIGHT,
                             autoClose: 3000, //3 seconds
                             hideProgressBar: false,
@@ -95,15 +105,6 @@ const Dashboard = () => {
                             transition: Slide
                         });
                     }
-                }
-                if (response.status === 200) {
-                    const contentType = response.headers.get("content-type");
-                    const blob = new Blob([response.data], { type: contentType });
-                    const url = URL.createObjectURL(blob);
-                    setDownloadLink(url);
-                    const processedArray = response.data.split("\n").map(row => row.split(","));
-                    setProcessedData(processedArray);
-                    setDataProcessed(true);
                 }
             }
         } catch (error) {
