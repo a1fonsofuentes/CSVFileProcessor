@@ -5,7 +5,7 @@ import supabase from './db';
 const Historico = () => {
     const [uploadData, setUploadData] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [selectedYear, setSelectedYear] = useState(null);
+    const [selectedYear, setSelectedYear] = useState('');
     const Header = ["Mes Detalle", "TOTAL Tipo de Venta", "Producto (Producto Oportunidad)", "Cuenta", "Monto Facturación", "Costo Detalle Facturación", "Utilidad", "Margen %"];
     const [years, setYears] = useState([]);
 
@@ -69,49 +69,51 @@ const Historico = () => {
                             <Form.Select size="sm" onChange={e => setSelectedYear(e.target.value)}>
                                 <option value="">Seleccionar año</option>
                                 {years.map(item => (
-                                    <option key={item} value={item}>
+                                    item && (<option key={item} value={item}>
                                         {item}
-                                    </option>
+                                    </option>)
                                 ))}
                             </Form.Select>
                             <br />
                             <Accordion flush>
-                                {filteredData.map((upload, index) => (upload.data.length > 0 && (
-                                    <Accordion.Item key={index} eventKey={index.toString()}>
-                                        <Accordion.Header> {upload.data[0][0]} - 
-                                        <br />Archivo Subido el:{' '}
-                                            {new Date(upload.uploadDate).toLocaleString('es-MX', {
-                                                year: 'numeric',
-                                                month: 'numeric',
-                                                day: 'numeric',
-                                                hour: 'numeric',
-                                                minute: 'numeric'
-                                            })}
-                                        </Accordion.Header>
-                                        <Accordion.Body>
-                                            <Table striped hover variant='dark'>
-                                                <thead>
-                                                    <tr>
-                                                        {Header.map((header, index) => (
-                                                            <th key={index}>{header}</th>
-                                                        ))}
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {upload.data.map((row, rowIndex) => (
-                                                        <tr key={rowIndex}>
-                                                            {row.slice(1).map((cell, cellIndex) => (
-                                                                <td key={cellIndex} style={{ color: '#B1C3B9' }}>
-                                                                    {cell}
-                                                                </td>
+                                {filteredData
+                                    .filter(upload => upload.data.length > 0) // Only consider uploads with non-empty data
+                                    .map((upload, index) => (
+                                        <Accordion.Item key={index} eventKey={index.toString()}>
+                                            <Accordion.Header>
+                                                {upload.data[0][0]} - Archivo Actualizado el:{' '}
+                                                {new Date(upload.uploadDate).toLocaleString('es-MX', {
+                                                    year: 'numeric',
+                                                    month: 'numeric',
+                                                    day: 'numeric',
+                                                    hour: 'numeric',
+                                                    minute: 'numeric'
+                                                })}
+                                            </Accordion.Header>
+                                            <Accordion.Body>
+                                                <Table striped hover variant='dark'>
+                                                    <thead>
+                                                        <tr>
+                                                            {Header.map((header, index) => (
+                                                                <th key={index}>{header}</th>
                                                             ))}
                                                         </tr>
-                                                    ))}
-                                                </tbody>
-                                            </Table>
-                                        </Accordion.Body>
-                                    </Accordion.Item>
-                                )))}
+                                                    </thead>
+                                                    <tbody>
+                                                        {upload.data.map((row, rowIndex) => (
+                                                            <tr key={rowIndex}>
+                                                                {row.slice(1).map((cell, cellIndex) => (
+                                                                    <td key={cellIndex} style={{ color: '#B1C3B9' }}>
+                                                                        {cell}
+                                                                    </td>
+                                                                ))}
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </Table>
+                                            </Accordion.Body>
+                                        </Accordion.Item>
+                                    ))}
                             </Accordion>
                         </Card.Body>
                     </Card>
