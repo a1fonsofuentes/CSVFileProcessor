@@ -201,7 +201,7 @@ const Dashboard = () => {
                                 <Nav.Link eventKey={'linkHistorico'} style={{ color: ((nav == 'historico') ? '#1F3528' : '#B1C3B9'), }}>Historico</Nav.Link>
                             </Nav.Item>
                             <Nav.Item>
-                                <Nav.Link eventKey={'linkAnalitics'} style={{ color: ((nav == 'anal') ? '#1F3528' : '#B1C3B9'), }}>Analitics</Nav.Link>
+                                <Nav.Link eventKey={'linkAnalitics'} style={{ color: ((nav == 'anal') ? '#1F3528' : '#B1C3B9'), }}>Analytics</Nav.Link>
                             </Nav.Item>
                         </Nav>
                     </Col>
