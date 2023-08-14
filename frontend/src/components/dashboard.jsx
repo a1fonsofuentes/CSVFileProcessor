@@ -4,6 +4,7 @@ import { Bounce, Slide, toast, } from 'react-toastify';
 import { Container, Card, Form, Button, Image, Col, Row, Stack, Table, Nav, Accordion } from 'react-bootstrap';
 import Spinner from 'react-bootstrap/Spinner';
 import Historico from './historico';
+import Analitics from './analitics';
 import supabase from './db';
 
 
@@ -13,8 +14,7 @@ const Dashboard = () => {
     const [downloadLink, setDownloadLink] = useState(null);
     const [processedData, setProcessedData] = useState([]);
     const [dataProcessed, setDataProcessed] = useState(false);
-    const [nav, setNav] = useState(false)
-    const years = [2020, 2021, 2022]
+    const [nav, setNav] = useState('default')
 
 
     const handleFileChange = (event) => {
@@ -30,7 +30,7 @@ const Dashboard = () => {
             alert("Please log in first to access the file processing tool.");
             return;
         }
- 
+
         const formData = new FormData();
         formData.append("file", selectedFile);
 
@@ -132,9 +132,11 @@ const Dashboard = () => {
 
     const handleTabSelect = (selectedKey) => {
         if (selectedKey === 'file') {
-            setNav(false);
+            setNav('default');
         } else if (selectedKey === 'linkHistorico') {
-            setNav(true);
+            setNav('historico');
+        } else if (selectedKey === 'linkAnalitics') {
+            setNav('anal');
         }
     };
 
@@ -192,23 +194,29 @@ const Dashboard = () => {
                     <Col>
                         <Nav variant="tabs" defaultActiveKey={'file'} onSelect={handleTabSelect}>
                             <Nav.Item>
-                                <Nav.Link eventKey={'file'} style={{ color: (!nav ? '#1F3528' : '#B1C3B9'), }}>Visualizar Archivo Procesado</Nav.Link>
+                                <Nav.Link eventKey={'file'} style={{ color: ((nav == 'default') ? '#1F3528' : '#B1C3B9'), }}>Visualizar Archivo Procesado</Nav.Link>
                             </Nav.Item>
                             <Nav.Item>
-                                <Nav.Link eventKey={'linkHistorico'} style={{ color: (nav ? '#1F3528' : '#B1C3B9'), }}>Historico</Nav.Link>
+                                <Nav.Link eventKey={'linkHistorico'} style={{ color: ((nav == 'historico') ? '#1F3528' : '#B1C3B9'), }}>Historico</Nav.Link>
+                            </Nav.Item>
+                            <Nav.Item>
+                                <Nav.Link eventKey={'linkAnalitics'} style={{ color: ((nav == 'anal') ? '#1F3528' : '#B1C3B9'), }}>Analitics</Nav.Link>
                             </Nav.Item>
                         </Nav>
                     </Col>
                 </Row>
-                {nav && (
+                {(nav == 'historico') && (
                     <Historico />
+                )}
+                {(nav == 'anal') && (
+                    <Analitics />
                 )}
                 {processing ? (
                     <div className="text-center">
                         <br /><br /><br /><Spinner animation="border" variant="warning" />
                     </div>
                 ) : (
-                    dataProcessed && !nav && (
+                    dataProcessed && (nav == 'default') && (
                         <Row className="justify-content-md-center">
                             <Col>
                                 <Table striped hover variant="dark">

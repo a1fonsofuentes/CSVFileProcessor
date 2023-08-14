@@ -5,8 +5,9 @@ import supabase from './db';
 const Historico = () => {
     const [processedData, setProcessedData] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [selectedYear, setSelectedYear] = useState(null);
     const Header = ["Mes Detalle", "TOTAL Tipo de Venta", "Producto (Producto Oportunidad)", "Cuenta", "Monto Facturación", "Costo Detalle Facturación", "Utilidad", "Margen %"]
-
+    const years = [2020, 2021, 2022]
     useEffect(() => {
         // Fetch data from Supabase and process it
         async function fetchData() {
@@ -34,6 +35,9 @@ const Historico = () => {
         }
         fetchData();
     }, []);
+
+    const filteredData = selectedYear ? processedData.filter(row => row[0] === selectedYear) : processedData;
+
     return (
         <Row>
             <Col className="justify-content-md-center">
@@ -44,7 +48,9 @@ const Historico = () => {
                         </Card.Title>
                         <Card.Body>
                             <Form.Select size="sm">
-                                a
+                                {years.map(item => (
+                                    <option value={item}>{item}</option>
+                                ))}
                             </Form.Select>
                             <br />
                             <Accordion flush>
@@ -60,10 +66,12 @@ const Historico = () => {
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {processedData.map((row, rowIndex) => (
+                                                {filteredData.map((row, rowIndex) => (
                                                     <tr key={rowIndex}>
-                                                        {row.map((cell, cellIndex) => (
-                                                            <td key={cellIndex} style={{ color: '#B1C3B9' }}>{cell}</td>
+                                                        {row.slice(1).map((cell, cellIndex) => (
+                                                            <td key={cellIndex} style={{ color: '#B1C3B9' }}>
+                                                                {cell}
+                                                            </td>
                                                         ))}
                                                     </tr>
                                                 ))}
