@@ -252,18 +252,14 @@ async def upload_file(file: UploadFile = File(...)):
 
     return Response(content=processed_csv_data, headers=headers)
 
-@app.get("/get-processed-data")
+@app.get("/data")
 async def get_processed_data():
     try:
         # Fetch data from Supabase for both tables
-        controller_data = await supabase.from_("controller").select("*")
-        data_data = await supabase.from_("data").select("*")
-        
-        if controller_data.error or data_data.error:
-            error_message = controller_data.error or data_data.error
-            return {"error": error_message}
+        controller_data = supabase.from_("controller").select("*").execute()
+        data_data = supabase.from_("data").select("*").execute()
 
-        # Process the data into desired format
+        # Process the data into the desired format
         processed_data = []
 
         for controller_row in controller_data.data:
@@ -274,17 +270,17 @@ async def get_processed_data():
 
             for data_row in data_data.data:
                 if data_row["upload"] == upload_id:
-                    row = [
-                        data_row["year"],
-                        data_row["month"],
-                        data_row["total_tipo_venta"],
-                        data_row["producto"],
-                        data_row["cuenta"],
-                        data_row["monto_facturacion"],
-                        data_row["costo_detalle_facturacion"],
-                        data_row["utilidad"],
-                        data_row["margin"]
-                    ]
+                    row = {
+                        "year": data_row["year"],
+                        "month": data_row["month"],
+                        "total_tipo_venta": data_row["total_tipo_venta"],
+                        "producto": data_row["producto"],
+                        "cuenta": data_row["cuenta"],
+                        "monto_facturacion": data_row["monto_facturacion"],
+                        "costo_detalle_facturacion": data_row["costo_detalle_facturacion"],
+                        "utilidad": data_row["utilidad"],
+                        "margin": data_row["margin"]
+                    }
                     data_rows.append(row)
 
             processed_data.append({
@@ -295,14 +291,15 @@ async def get_processed_data():
         return {"processedData": processed_data}
 
     except Exception as e:
+        print(e)
         return {"error": str(e)}
+    
+
+def supabase_queries():
+    data = supabase.table('data').select('*').execute()
+    print(data)
 
 if __name__ == "__main__":
     import uvicorn
 
     uvicorn.run(app, host="0.0.0.0", port=8000)
-
-
-def supabase_queries():
-    data = supabase.table('data').select('*').execute()
-    print(data)
