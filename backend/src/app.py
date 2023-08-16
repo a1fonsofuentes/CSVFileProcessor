@@ -9,6 +9,9 @@ from fastapi.security import HTTPBasicCredentials, HTTPBasic
 from passlib.context import CryptContext
 import jwt
 import base64
+from dotenv import load_dotenv
+import os
+from supabase import create_client 
 
 app = FastAPI()
 
@@ -173,12 +176,16 @@ def process_csv(file_content: bytes = File(...)):
         'Monto Facturación': 'sum',
         'Costo Detalle  Facturación': 'sum'
     }).reset_index()
-
+#__________________________
+    first_row_year = final_df['Año'].iloc[0]
+    final_df['Año'].fillna(first_row_year, inplace=True)
+#__________________________
     final_df['Monto Facturación'] = round(final_df['Monto Facturación'], 2)
     final_df['Costo Detalle  Facturación'] = round(final_df['Costo Detalle  Facturación'], 2)
 
     final_df['Utilidad'] = round(final_df['Monto Facturación'] - final_df['Costo Detalle  Facturación'], 2)
     final_df['Margen %'] = round((final_df['Utilidad'] / final_df['Monto Facturación']) * 100, 2)
+
 
     totals_df = final_df.groupby(['Mes Detalle', 'Tipo de Venta (Producto Oportunidad)']).agg({
         'Monto Facturación': 'sum',
@@ -244,4 +251,14 @@ if __name__ == "__main__":
 
     uvicorn.run(app, host="0.0.0.0", port=8000)
 
-#HAKDHNDAEDNNENOAIJN
+
+def supabase_queries():
+    load_dotenv()
+
+    url = os.environ.get("SUPABASE_URL")
+    key = os.environ.get("SUPABASE_KEY")
+    supabase = create_client(url, key)
+
+    data = supabase.table('data').select('*').execute()
+
+    print(data)
