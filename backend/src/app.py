@@ -15,6 +15,12 @@ from supabase import create_client
 
 app = FastAPI()
 
+load_dotenv()
+
+url = os.environ.get("SUPABASE_URL")
+key = os.environ.get("SUPABASE_KEY")
+supabase = create_client(url, key)
+
 origins = [
     "http://localhost:5173",
 ]
@@ -246,6 +252,51 @@ async def upload_file(file: UploadFile = File(...)):
 
     return Response(content=processed_csv_data, headers=headers)
 
+@app.get("/get-processed-data")
+async def get_processed_data():
+    try:
+        # Fetch data from Supabase for both tables
+        controller_data = await supabase.from_("controller").select("*")
+        data_data = await supabase.from_("data").select("*")
+        
+        if controller_data.error or data_data.error:
+            error_message = controller_data.error or data_data.error
+            return {"error": error_message}
+
+        # Process the data into desired format
+        processed_data = []
+
+        for controller_row in controller_data.data:
+            upload_date = controller_row["fecha"]
+            upload_id = controller_row["id"]
+            
+            data_rows = []
+
+            for data_row in data_data.data:
+                if data_row["upload"] == upload_id:
+                    row = [
+                        data_row["year"],
+                        data_row["month"],
+                        data_row["total_tipo_venta"],
+                        data_row["producto"],
+                        data_row["cuenta"],
+                        data_row["monto_facturacion"],
+                        data_row["costo_detalle_facturacion"],
+                        data_row["utilidad"],
+                        data_row["margin"]
+                    ]
+                    data_rows.append(row)
+
+            processed_data.append({
+                "uploadDate": upload_date,
+                "data": data_rows
+            })
+
+        return {"processedData": processed_data}
+
+    except Exception as e:
+        return {"error": str(e)}
+
 if __name__ == "__main__":
     import uvicorn
 
@@ -253,12 +304,5 @@ if __name__ == "__main__":
 
 
 def supabase_queries():
-    load_dotenv()
-
-    url = os.environ.get("SUPABASE_URL")
-    key = os.environ.get("SUPABASE_KEY")
-    supabase = create_client(url, key)
-
     data = supabase.table('data').select('*').execute()
-
     print(data)
