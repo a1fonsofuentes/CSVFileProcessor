@@ -12,41 +12,13 @@ const Historico = () => {
     useEffect(() => {
         // Fetch data from Supabase for both tables
         async function fetchData() {
-            const { data: controllerData, error: controllerError } = await supabase
-                .from('controller')
-                .select('*');
-
-            const { data: dataData, error: dataError } = await supabase
-                .from('data')
-                .select('*');
-
-            if (controllerError || dataError) {
-                console.error('Error fetching data:', controllerError || dataError);
-            } else {
-                // Organize the data by upload date
-                const uploads = controllerData.map(controllerRow => ({
-                    uploadDate: controllerRow.fecha,
-                    data: dataData.filter(dataRow => dataRow.upload === controllerRow.id).map(row => [
-                        row.year,
-                        row.month,
-                        row.total_tipo_venta,
-                        row.producto,
-                        row.cuenta,
-                        row.monto_facturacion,
-                        row.costo_detalle_facturacion,
-                        row.utilidad,
-                        row.margin
-                    ])
-                }));
-
-                setUploadData(uploads);
-
-                // Extract unique years from the data
-                const uniqueYears = [...new Set(dataData.map(row => row.year))];
-                setYears(uniqueYears);
-
-                setLoading(true);
-            }
+            const response = await fetch('/get-processed-data'); // Calling the new backend endpoint
+            const data = await response.json();
+            setUploadData(uploads);
+            // Extract unique years from the data
+            const uniqueYears = [...new Set(dataData.map(row => row.year))];
+            setYears(uniqueYears);
+            setLoading(true);
         }
 
         fetchData();
