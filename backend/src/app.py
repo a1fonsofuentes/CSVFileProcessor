@@ -184,7 +184,7 @@ def process_csv(file_content: bytes = File(...)):
     }).reset_index()
 #__________________________
     first_row_year = final_df['Año'].iloc[0]
-    final_df['Año'].fillna(first_row_year, inplace=True)
+    final_df['Año'] = first_row_year
 #__________________________
     final_df['Monto Facturación'] = round(final_df['Monto Facturación'], 2)
     final_df['Costo Detalle  Facturación'] = round(final_df['Costo Detalle  Facturación'], 2)
@@ -230,6 +230,10 @@ def process_csv(file_content: bytes = File(...)):
     final_df['Utilidad'] = final_df['Utilidad'].round(2)
     final_df['Margen %'] = final_df['Margen %'].round(2)
     final_df['Mes Detalle'] = final_df['Mes Detalle'].astype(int)
+
+    year = final_df.loc[0, 'Año']
+    final_df['Año'] = year
+    print(final_df.head())
 
     # Instead of using io.BytesIO, we use io.StringIO for CSV processing
     processed_data_buffer = io.StringIO()
