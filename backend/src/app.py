@@ -12,6 +12,9 @@ import base64
 from dotenv import load_dotenv
 import os
 from supabase import create_client 
+import matplotlib.pyplot as plt
+import numpy as np
+import mplcursors
 
 app = FastAPI()
 
@@ -302,6 +305,41 @@ async def get_processed_data():
 def supabase_queries():
     data = supabase.table('data').select('*').execute()
     print(data)
+
+def anual_sales_line_graph():
+    highest_id_response = supabase.from_('data').select('upload').order('upload', desc=True).limit(1).execute()
+    highest_id = highest_id_response.data[0]['upload']
+
+    response = supabase.from_('data').select('monto_facturacion').eq('upload', highest_id).eq('total_tipo_venta', '– TOTAL DEL MES – ').limit(1000).execute() #TO USE IT HERE BC WE GOT 24 ENTRIES RN 
+    data = response.data
+    
+    # response = supabase.table('data').select('*').execute()
+    # data = response.data
+
+    df = pd.DataFrame(data)
+    print(df)
+    
+    monthly_totals = df['monto_facturacion'].tolist()
+    months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Sept.', 'Octubre', 'Nov.', 'Dic.']
+
+    plt.figure(figsize=(10, 6))  
+    plt.plot(months, monthly_totals, marker='o')
+    plt.title('Progresión de ventas')
+    plt.xlabel('Mes')
+    plt.ylabel('Ventas totales')
+    plt.grid(True)
+
+    plt.yticks(range(100000, 1000001, 100000), ['$100,000', '$200,000', '$300,000', '$400,000', '$500,000', '$600,000', '$700,000', '$800,000', '$900,000', '$1,000,000'])
+    plt.xticks(rotation=45)
+
+    dot_indices = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]  
+
+    cursor = mplcursors.cursor(hover=True)
+    cursor.connect("add", lambda sel: sel.annotation.set_text(f"${sel.target[1]:,.2f}") if sel.index in dot_indices else None)
+
+    plt.tight_layout()
+    plt.show()
+    
 
 if __name__ == "__main__":
     import uvicorn
