@@ -46,15 +46,15 @@ const Historico = () => {
                         </Card.Title>
                         <Card.Body>
                             <Form.Select size="sm" onChange={e => setSelectedYear(e.target.value)}>
-                                <option value="" disabled>Seleccionar año</option>
-                                {[...new Set(years.filter(year => year !== ""))].map(year => (
+                                <option value="">Seleccionar año</option>
+                                {[...new Set(years.filter(year => (year !== "")))].map(year => (
                                     <option key={year} value={year}>
                                         {year}
                                     </option>
                                 ))}
                             </Form.Select>
                             <br />
-                            {filteredData.map((upload, index) => (
+                            {filteredData.map((upload) => (
                                 upload.data.length > 0 && (<Accordion>
                                     <Accordion.Item key={upload.uploadDate} eventKey={upload.uploadDate}>
                                         <Accordion.Header>
