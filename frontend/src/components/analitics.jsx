@@ -1,45 +1,37 @@
 import React, { useState, useEffect, PureComponent } from 'react';
 import { Card, Form, Col, Row, Accordion, Spinner, Table, Container } from 'react-bootstrap';
-import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import {
+  ComposedChart,
+  Line,
+  Area,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  Scatter,
+  ResponsiveContainer,
+} from 'recharts';
+import axios from 'axios';
 
 const Analitics = () => {
-  const data = [
-    {
-      name: 'Page A',
-      pv: 2400,
-      amt: 2400,
-    },
-    {
-      name: 'Page B',
-      pv: 1398,
-      amt: 2210,
-    },
-    {
-      name: 'Page C',
-      pv: 9800,
-      amt: 2290,
-    },
-    {
-      name: 'Page D',
-      pv: 3908,
-      amt: 2000,
-    },
-    {
-      name: 'Page E',
-      pv: 4800,
-      amt: 2181,
-    },
-    {
-      name: 'Page F',
-      pv: 3800,
-      amt: 2500,
-    },
-    {
-      name: 'Page G',
-      pv: 4300,
-      amt: 2100,
-    },
-  ];
+  const [data, setData] = useState([]); // State to store fetched data
+
+  useEffect(() => {
+    // Define an async function to fetch data
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('http://localhost:8000/get_total_facturacion'); // Replace with your API endpoint
+        console.log(response)
+        setData(response.data); // Update the data state with fetched data
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData(); // Call the fetch function when the component mounts
+  }, []);
   return (
     <Row>
       <Col className="justify-content-md-center">
@@ -52,24 +44,29 @@ const Analitics = () => {
           </Card.Subtitle>
           <Card.Text>
             <Container>
-              <BarChart
-                width={800}
-                height={600}
-                data={data}
-                margin={{
-                  top: 20,
-                  right: 30,
-                  left: 20,
-                  bottom: 5,
-                }}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis yAxisId="left" orientation="left" stroke="#8884d8" />
-                <Tooltip />
-                <Legend />
-                <Bar yAxisId="left" dataKey="pv" fill="#8884d8" />
-              </BarChart>
+              {data.length > 0 ? (
+                <ComposedChart
+                  width={500}
+                  height={400}
+                  data={data}
+                  margin={{
+                    top: 20,
+                    right: 20,
+                    bottom: 20,
+                    left: 20,
+                  }}
+                >
+                  <CartesianGrid stroke="#f5f5f5" />
+                  <XAxis dataKey="total_tipo_venta" scale="band" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="utilidad" barSize={20} fill="#413ea0" />
+                  <Bar dataKey="monto_facturacion" barSize={20} fill="#27ae60" />
+                </ComposedChart>
+              ) : (
+                <p>Loading...</p>
+              )}
             </Container>
           </Card.Text>
         </Card>

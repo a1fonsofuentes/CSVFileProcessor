@@ -3,7 +3,7 @@ from pydantic import BaseModel
 import pandas as pd
 import re
 import io
-from fastapi.responses import FileResponse, Response
+from fastapi.responses import FileResponse, Response, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBasicCredentials, HTTPBasic
 from passlib.context import CryptContext
@@ -300,6 +300,55 @@ async def get_processed_data():
     except Exception as e:
         print(e)
         return {"error": str(e)}
+    
+def get_total_facturacion(data):
+    # Convert 'year' and 'month' to integers for comparison
+    valid_data = []
+    for row in data:
+        if row["year"] is not None:
+            try:
+                year = int(row["year"].replace('.', ''))  # Convert to float first, then to int
+                valid_data.append({**row, "year": year, "month": int(row["month"])})
+            except ValueError:
+                pass  # Skip rows with non-numeric or empty "year" values
+
+    if not valid_data:
+        return {"error": "No valid year values"}
+
+    # Extract the required fields from each row and filter for the highest year and upload
+    max_year = max(valid_data, key=lambda row: row["year"])["year"]
+    latest_upload_rows = [row for row in valid_data if row["year"] == max_year]
+
+    return latest_upload_rows
+
+
+# This function fetches the data from Supabase and processes it using the above function
+def process_supabase_data():
+    try:
+        # Fetch data from Supabase
+        response = supabase.from_("data").select("*").execute()
+        data = response.data
+        # Check if there is any data
+        if data:
+            # Call the function to calculate the desired values
+            total_facturacion = get_total_facturacion(data)
+            return {"result": total_facturacion}  # Wrap in a dictionary with a "result" key
+        else:
+            return {"error": "No data available"}
+
+    except Exception as e:
+        return {"error": str(e)}
+    
+@app.get("/get_total_facturacion")
+async def get_total_facturacion_endpoint():
+    try:
+        result = process_supabase_data()
+        if "error" in result:
+            return JSONResponse(content=result, status_code=400)
+        formatted_data = result["result"]
+        return JSONResponse(content=formatted_data, status_code=200)
+    except Exception as e:
+        return JSONResponse(content={"error": str(e)}, status_code=500)
     
 
 def supabase_queries():
