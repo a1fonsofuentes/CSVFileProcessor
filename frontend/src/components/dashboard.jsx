@@ -35,13 +35,14 @@ const Dashboard = () => {
         formData.append("file", selectedFile);
 
         try {
+            let processedArray = [];
             const response = await uploadFile(formData);
             if (response.status === 200) {
                 const contentType = response.headers.get("content-type");
                 const blob = new Blob([response.data], { type: contentType });
                 const url = URL.createObjectURL(blob);
                 setDownloadLink(url);
-                const processedArray = response.data.split("\n").map(row => row.split(","));
+                processedArray = response.data.split("\n").map(row => row.split(","));
                 setProcessedData(processedArray);
                 setDataProcessed(true);
             }
@@ -61,8 +62,9 @@ const Dashboard = () => {
             } else {
                 console.log(controllerResponse)
                 const controllerId = controllerResponse.data[0].id;
-                for (let rowIndex = 1; rowIndex < processedData.length; rowIndex++) {
-                    const row = processedData[rowIndex];
+                for (let rowIndex = 1; rowIndex < processedArray.length; rowIndex++) {
+                    const row = processedArray[rowIndex]; // Use row directly
+                
                     const { data, error } = await supabase
                         .from('data')
                         .insert([
