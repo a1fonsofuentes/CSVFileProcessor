@@ -418,6 +418,76 @@ def anual_sales_line_graph():
 #     except Exception as e:
 #         return JSONResponse(content={"error": str(e)}, status_code=500)
 
+def producto_oportunidad():
+    dataframes = []
+    final_list = []
+    productos = ['DIGITALIZACION', 'GEMALTO PVC', 'CAMI APP', 'ONBASE', 'E-POWER', 'OTROS', 'FUJITSU', 'GEMALTO', 'BIZAGI']
+    month = 1
+
+    for producto in productos:
+        response = supabase.from_('data').select('monto_facturacion').eq('upload', highest_id).eq('producto', producto).limit(1000).execute()
+        data = response.data
+        dataframes.append((pd.DataFrame(data))['monto_facturacion'].tolist())
+    
+    for i in range(len(dataframes)):
+        final_list.append(sum(dataframes[i]))
+    
+    array = []
+    for i, product in enumerate(productos):
+        array.append({
+            'producto': product,
+            'monto_facturacion': final_list[i]
+        })
+
+    return array
+
+def linear_regression():
+    response1 = supabase.from_('data').select('monto_facturacion').eq('upload', highest_id).eq('total_tipo_venta', '– TOTAL DEL MES – ').limit(1000).execute() 
+    data = response1.data
+    
+    response2 = supabase.from_('data').select('monto_facturacion').eq('upload', 18).eq('total_tipo_venta', '– TOTAL DEL MES – ').limit(1000).execute()
+    data2 = response2.data
+    df = pd.DataFrame(data)
+    df2 = pd.DataFrame(data2)
+    
+    year1_sales = df['monto_facturacion'].tolist()
+    year2_sales = df2['monto_facturacion'].tolist()
+    months = np.arange(1, 13)
+
+    combined_sales = year1_sales + year2_sales
+    combined_months = np.tile(months, 2)
+
+    model = LinearRegression()
+
+    plt.style.use('seaborn-darkgrid')
+    plt.figure(figsize=(10, 6))
+
+    X = combined_months.reshape(-1, 1)
+    y = np.array(combined_sales)
+    model.fit(X, y)
+
+    y_pred = model.predict(X)
+
+    plt.scatter(combined_months[:12], year1_sales, color='blue', label='Year 1 Data', s=80)
+    plt.scatter(combined_months[12:], year2_sales, color='green', label='Year 2 Data', s=80)
+    
+    plt.plot(combined_months, y_pred, label='Combined Regression Line', color='red', linewidth=2)
+
+    plt.title('Linear Regression of Total Sales', fontsize=16)
+    plt.xlabel('Month', fontsize=14)
+    plt.ylabel('Total Sales', fontsize=14)
+    plt.legend(fontsize=12, loc='upper left')  
+
+    plt.grid(True, alpha=0.5)
+    plt.xticks(months, fontsize=12)
+    plt.yticks(np.arange(200000, 1000001, 200000), ['$200,000', '$400,000', '$600,000', '$800,000', '$1,000,000'], fontsize=12)
+
+    plt.legend(fontsize=12)
+    plt.tight_layout()
+
+    plt.savefig('linear_regression_sales.png', dpi=300)
+
+    plt.show()
 
 if __name__ == "__main__":
     import uvicorn
