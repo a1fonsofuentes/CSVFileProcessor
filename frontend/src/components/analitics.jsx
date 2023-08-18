@@ -36,7 +36,7 @@ const Analitics = () => {
   const [data, setData] = useState([]);
   const [selectedYear, setSelectedYear] = useState('');
   const [availableYears, setAvailableYears] = useState([]);
-  const [selectedMonth, setSelectedMonth] = useState('');
+  const [selectedMonth, setSelectedMonth] = useState('1');
   useEffect(() => {
     // Define an async function to fetch data
     const fetchData = async () => {
@@ -60,8 +60,8 @@ const Analitics = () => {
   }, []);
 
   const filterDataByMonthAndTipoVenta = (selectedMonth) => {
-    const filteredData = data.filter((entry) => entry.month === parseInt(selectedMonth));
-
+    const filteredData = data.filter((entry) => entry.month === parseInt(selectedMonth) && entry.total_tipo_venta !== '– TOTAL DEL MES – ');
+    console.log(data)
     const aggregatedData = filteredData.reduce((result, entry) => {
       const tipoVenta = entry.total_tipo_venta;
       const utilidad = entry.utilidad;
