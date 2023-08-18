@@ -118,12 +118,34 @@ const Analitics = () => {
           <Card.Text>
             {data.length > 0 ? (
               <>
-                <Card>
+                <Card style={{ backgroundColor: "#ffffff", color: "#333", fontSize: 15, textAlign: "center", padding: "20px", borderRadius: '10px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)', }}>
+                  <Card.Title>
+                    <h4>Grafica anual - Ventas</h4>
+                  </Card.Title>
+                  <Card.Text>
+                    <img
+                      src={`http://localhost:8000/get_anual_sales_line_graph_image`}
+                      alt="Anual Sales Graph"
+                      style={{ width: '90%' }}
+                    />
+                  </Card.Text>
+                </Card>
+                <br />
+                <br />
+                <Card style={{ backgroundColor: "#ffffff", color: "#333", fontSize: 15, textAlign: "center", padding: "20px", borderRadius: '10px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)', }}>
                   <Card.Title>
                     <h4>Grafica Mensual - Tipo de Venta</h4>
                   </Card.Title>
                   <Card.Subtitle>
-                    <MonthSelector selectedMonth={selectedMonth} onSelectMonth={setSelectedMonth} />
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      width: '100%',
+                      margin: '0 auto', // This will center the div horizontally
+                    }}
+                    >
+                      <MonthSelector selectedMonth={selectedMonth} onSelectMonth={setSelectedMonth} />
+                    </div>
                   </Card.Subtitle>
                   <Card.Text>
                     <div style={{ width: '100%', height: 600 }}>
@@ -140,7 +162,7 @@ const Analitics = () => {
                           {console.log(filterDataByMonthAndTipoVenta(selectedMonth))}
                           <CartesianGrid stroke="#3E6A51" />
                           <XAxis dataKey="total_tipo_venta" stroke="#3E6A51" />
-                          <YAxis scale={'sqrt'} />
+                          <YAxis scale={'sqrt'} tickCount={15} tickFormatter={(value) => `$${value.toLocaleString()}`} />
                           <Tooltip />
                           <Legend />
                           <Bar dataKey="utilidad_total" barSize={30} fill="#2986cc" />
@@ -150,7 +172,9 @@ const Analitics = () => {
                     </div>
                   </Card.Text>
                 </Card>
-                <Card>
+                <br />
+                <br />
+                <Card style={{ backgroundColor: "#ffffff", color: "#333", fontSize: 15, textAlign: "center", padding: "20px", borderRadius: '10px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)', }}>
                   <Card.Title>
                     <h4>Grafica anual - Tipo de Venta</h4>
                   </Card.Title>
@@ -165,13 +189,13 @@ const Analitics = () => {
                             top: 20,
                             right: 20,
                             bottom: 20,
-                            left: 20,
+                            left: 30,
                           }}
                         >
                           {console.log(chartData)}
                           <CartesianGrid stroke="#3E6A51" />
                           <XAxis dataKey="total_tipo_venta" stroke="#3E6A51" />
-                          <YAxis domain={[0, 200000]} scale={'sqrt'} />
+                          <YAxis domain={[0, 200000]} scale={'sqrt'} tickCount={15} tickFormatter={(value) => `$${value.toLocaleString()}`} />
                           <Tooltip />
                           <Legend />
                           <Bar dataKey="utilidad_total" barSize={30} fill="#2986cc" />
@@ -179,18 +203,6 @@ const Analitics = () => {
                         </ComposedChart>
                       </ResponsiveContainer>
                     </div>
-                  </Card.Text>
-                </Card>
-                <Card>
-                  <Card.Title>
-                    <h4>Grafica anual - Ventas</h4>
-                  </Card.Title>
-                  <Card.Text>
-                    <img
-                      src={`http://localhost:8000/get_anual_sales_line_graph_image`}
-                      alt="Anual Sales Graph"
-                      style={{ width: '100%' }}
-                    />
                   </Card.Text>
                 </Card>
               </>

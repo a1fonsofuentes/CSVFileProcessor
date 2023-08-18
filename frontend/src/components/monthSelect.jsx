@@ -21,7 +21,7 @@ const MonthSelector = ({ selectedMonth, onSelectMonth }) => {
     <Form.Group>
       <Form.Label>Select Month:</Form.Label>
       <Form.Control as="select" value={selectedMonth} onChange={(e) => onSelectMonth(e.target.value)}>
-        <option value="">All Months</option>
+        <option value="">Select Month</option>
         {Object.keys(monthNames).map((month) => (
           <option key={month} value={month}>
             {monthNames[month]}

@@ -383,14 +383,14 @@ def anual_sales_line_graph():
     months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Sept.', 'Octubre', 'Nov.', 'Dic.']
 
     plt.figure(figsize=(10, 6))  
-    plt.plot(months, monthly_totals, marker='o')
-    plt.title('Progresión de ventas')
-    plt.xlabel('Mes')
-    plt.ylabel('Ventas totales')
+    plt.plot(months, monthly_totals, marker='o', color='#27ae60')
+    plt.title('Progresión de ventas' , color='#3E6A51')
+    plt.xlabel('Mes', color='#3E6A51')
+    plt.ylabel('Ventas totales', color='#3E6A51')
     plt.grid(True)
 
     plt.yticks(range(100000, 1000001, 100000), ['$100,000', '$200,000', '$300,000', '$400,000', '$500,000', '$600,000', '$700,000', '$800,000', '$900,000', '$1,000,000'])
-    plt.xticks(rotation=45)
+    plt.xticks(rotation=45, color='#3E6A51')
 
     dot_indices = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]  
 
