@@ -15,6 +15,7 @@ from supabase import create_client
 import matplotlib.pyplot as plt
 import numpy as np
 import mplcursors
+from typing import List
 
 app = FastAPI()
 
@@ -355,6 +356,16 @@ def supabase_queries():
     data = supabase.table('data').select('*').execute()
     print(data)
 
+@app.get("/get_anual_sales_line_graph_image")
+async def get_anual_sales_line_graph_image():
+    image_path = anual_sales_line_graph()
+    
+    # Check if the image file exists
+    if os.path.exists(image_path):
+        return FileResponse(image_path, media_type="image/png")
+    else:
+        return JSONResponse(content={"error": "Image not found"}, status_code=404)
+
 def anual_sales_line_graph():
     highest_id_response = supabase.from_('data').select('upload').order('upload', desc=True).limit(1).execute()
     highest_id = highest_id_response.data[0]['upload']
@@ -387,8 +398,20 @@ def anual_sales_line_graph():
     cursor.connect("add", lambda sel: sel.annotation.set_text(f"${sel.target[1]:,.2f}") if sel.index in dot_indices else None)
 
     plt.tight_layout()
-    plt.show()
+    # Save the graph as an image file
+    image_path = "sales_progression.png"
+    plt.savefig(image_path)
+    return image_path
     
+# @app.get("/get_available_years")
+# async def get_available_years():
+#     try:
+#         response = supabase.from_("data").select("distinct year").execute()
+#         available_years = [row["year"] for row in response.data]
+#         return {"availableYears": available_years}
+#     except Exception as e:
+#         return JSONResponse(content={"error": str(e)}, status_code=500)
+
 
 if __name__ == "__main__":
     import uvicorn
