@@ -389,6 +389,12 @@ def anual_sales_line_graph():
     plt.ylabel('Ventas totales', color='#3E6A51')
     plt.grid(True)
 
+    ax = plt.gca()  # Get the current axes
+
+    # Set the color of the graph border (spines)
+    for spine in ax.spines.values():
+        spine.set_edgecolor('#3E6A51')
+
     plt.yticks(range(100000, 1000001, 100000), ['$100,000', '$200,000', '$300,000', '$400,000', '$500,000', '$600,000', '$700,000', '$800,000', '$900,000', '$1,000,000'])
     plt.xticks(rotation=45, color='#3E6A51')
 
