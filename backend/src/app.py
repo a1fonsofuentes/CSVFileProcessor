@@ -518,6 +518,28 @@ def producto_oportunidad_query():
 
     return array
 
+def clientes():
+    file_path = "processed_data (10).csv"
+    df = pd.read_csv(file_path)
+
+    clientes = df['Cuenta'].unique()
+
+    final_list = []
+    for cliente in clientes:
+        response = supabase.from_('data').select('monto_facturacion').eq('upload', highest_id).eq('cuenta', cliente).limit(1000).execute()
+        data = response.data
+
+        monto_facturacion_values = [item['monto_facturacion'] for item in data]
+
+        sum_monto_facturacion = sum(monto_facturacion_values)
+        if sum_monto_facturacion != 0:
+            final_list.append({
+                'cliente': cliente,
+                'monto_facturacion': sum_monto_facturacion
+            })
+
+    return final_list
+
 if __name__ == "__main__":
     import uvicorn
 
