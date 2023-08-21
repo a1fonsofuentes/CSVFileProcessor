@@ -144,12 +144,12 @@ const Dashboard = () => {
     };
 
     return (
-        <div style={{ backgroundColor: "#3E6A51", minHeight: "100vh", padding: "20px" }}>
+        <div style={{ backgroundColor: "#50b3e5", minHeight: "100vh", padding: "20px" }}>
             <Container>
                 <Row className="justify-content-md-center">
                     <Col>
                         <Card style={{ backgroundColor: "#ffffff", color: "#333", fontSize: 15, textAlign: "center", padding: "20px", borderRadius: '10px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)', }}>
-                            <Card.Title style={{ color: "#27ae60", fontSize: "24px", marginBottom: "10px" }}>
+                            <Card.Title style={{ color: "#50b3e5", fontSize: "24px", marginBottom: "10px" }}>
                                 <Stack direction="horizontal" gap={3} style={{ justifyContent: "center" }}>
                                     <Image src="https://app.camiapp.net/assets/Tuerca-eb3d566b.svg" width={"15%"} rounded />
                                     <Image src="https://app.camiapp.net/assets/Logo-8a7d2727.svg" width={"25%"} rounded />
@@ -157,7 +157,7 @@ const Dashboard = () => {
                                 <br />
                                 Camilitics
                             </Card.Title>
-                            <Card.Subtitle style={{ color: "#27ae60", fontSize: "16px", marginBottom: "20px" }}>
+                            <Card.Subtitle style={{ color: "#50b3e5", fontSize: "16px", marginBottom: "20px" }}>
                                 Upload your file, and download the processed data
                             </Card.Subtitle>
                             <Card.Text>
@@ -197,13 +197,13 @@ const Dashboard = () => {
                     <Col>
                         <Nav variant="tabs" defaultActiveKey={'file'} onSelect={handleTabSelect}>
                             <Nav.Item>
-                                <Nav.Link eventKey={'file'} style={{ color: ((nav == 'default') ? '#1F3528' : '#B1C3B9'), }}>Visualizar Archivo Procesado</Nav.Link>
+                                <Nav.Link eventKey={'file'} style={{ color: ((nav == 'default') ? '#387DA0' : '#818282'), }}>Visualizar Archivo Procesado</Nav.Link>
                             </Nav.Item>
                             <Nav.Item>
-                                <Nav.Link eventKey={'linkHistorico'} style={{ color: ((nav == 'historico') ? '#1F3528' : '#B1C3B9'), }}>Historico</Nav.Link>
+                                <Nav.Link eventKey={'linkHistorico'} style={{ color: ((nav == 'historico') ? '#387DA0' : '#818282'), }}>Historico</Nav.Link>
                             </Nav.Item>
                             <Nav.Item>
-                                <Nav.Link eventKey={'linkAnalitics'} style={{ color: ((nav == 'anal') ? '#1F3528' : '#B1C3B9'), }}>Analytics</Nav.Link>
+                                <Nav.Link eventKey={'linkAnalitics'} style={{ color: ((nav == 'anal') ? '#387DA0' : '#818282'), }}>Analytics</Nav.Link>
                             </Nav.Item>
                         </Nav>
                     </Col>
@@ -227,7 +227,7 @@ const Dashboard = () => {
                                         <thead>
                                             <tr>
                                                 {processedData[0].map((header, index) => (
-                                                    <th key={index}>{header}</th>
+                                                    <th key={index} style={{color: '#50b3e5'}}>{header}</th>
                                                 ))}
                                             </tr>
                                         </thead>
@@ -235,7 +235,7 @@ const Dashboard = () => {
                                             {processedData.slice(1).map((row, rowIndex) => (
                                                 <tr key={rowIndex}>
                                                     {row.map((cell, cellIndex) => (
-                                                        <td key={cellIndex} style={{ color: '#B1C3B9' }}>{cell}</td>
+                                                        <td key={cellIndex} style={{ color: '#387DA0' }}>{cell}</td>
                                                     ))}
                                                 </tr>
                                             ))}

@@ -15,6 +15,7 @@ import {
   PieChart,
   Pie,
   Cell,
+  Label
 } from 'recharts';
 import axios from 'axios';
 import YearSelector from './availableYears';
@@ -34,6 +35,8 @@ const monthNames = {
   11: 'Noviembre',
   12: 'Diciembre'
 };
+
+const colors = ['#818282', '#50E5CD', '#50b3e5', '#FFCF44', '#387DA0', '#84C9EC', '#61BAE7', '#ffc416', '#E5CD50'];
 
 const Analitics = () => {
   const [data, setData] = useState([]);
@@ -116,14 +119,19 @@ const Analitics = () => {
     }
     return totals;
   }, {});
-
-  // Convert the calculated totals into an array of objects for the chart
+  const calculateLabelPosition = (cx, cy, radius, angle) => {
+    const radianAngle = (angle - 90) * (Math.PI / 180);
+    const x = cx + radius * Math.cos(radianAngle);
+    const y = cy + radius * Math.sin(radianAngle);
+    return { x, y };
+  };
   const chartData = Object.values(tipoVentaTotals);
+  const totalMontoFacturacion = oportunidad.reduce((total, entry) => total + entry.monto_facturacion, 0);
   return (
     <Row>
       <Col className="justify-content-md-center">
         <Card style={{ backgroundColor: "#ffffff", color: "#333", fontSize: 15, textAlign: "center", padding: "20px", borderRadius: '10px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)', }}>
-          <Card.Title style={{ color: "#27ae60", fontSize: "24px", marginBottom: "10px" }}>
+          <Card.Title style={{ color: "#50b3e5", fontSize: "24px", marginBottom: "10px" }}>
             Analitics
           </Card.Title>
           <Card.Subtitle>
@@ -173,13 +181,13 @@ const Analitics = () => {
                             left: 20,
                           }}
                         >
-                          <CartesianGrid stroke="#3E6A51" />
-                          <XAxis dataKey="total_tipo_venta" stroke="#3E6A51" />
+                          <CartesianGrid stroke="#50b3e5" />
+                          <XAxis dataKey="total_tipo_venta" stroke="#50b3e5" />
                           <YAxis scale={'sqrt'} tickCount={15} tickFormatter={(value) => `$${value.toLocaleString()}`} />
                           <Tooltip />
                           <Legend />
-                          <Bar dataKey="utilidad_total" barSize={30} fill="#2986cc" />
-                          <Bar dataKey="monto_facturacion_total" barSize={30} fill="#27ae60" />
+                          <Bar dataKey="utilidad_total" barSize={30} fill="#ffc416" />
+                          <Bar dataKey="monto_facturacion_total" barSize={30} fill="#50b3e5" />
                         </ComposedChart>
                       </ResponsiveContainer>
                     </div>
@@ -205,13 +213,13 @@ const Analitics = () => {
                             left: 30,
                           }}
                         >
-                          <CartesianGrid stroke="#3E6A51" />
-                          <XAxis dataKey="total_tipo_venta" stroke="#3E6A51" />
+                          <CartesianGrid stroke="#50b3e5" />
+                          <XAxis dataKey="total_tipo_venta" stroke="#50b3e5" />
                           <YAxis domain={[0, 200000]} scale={'sqrt'} tickCount={15} tickFormatter={(value) => `$${value.toLocaleString()}`} />
                           <Tooltip />
                           <Legend />
-                          <Bar dataKey="utilidad_total" barSize={30} fill="#2986cc" />
-                          <Bar dataKey="monto_facturacion_total" barSize={30} fill="#27ae60" />
+                          <Bar dataKey="utilidad_total" barSize={30} fill="#ffc416" />
+                          <Bar dataKey="monto_facturacion_total" barSize={30} fill="#50b3e5" />
                         </ComposedChart>
                       </ResponsiveContainer>
                     </div>
@@ -238,12 +246,12 @@ const Analitics = () => {
                           }}
                         >
                           {console.log(oportunidad)}
-                          <CartesianGrid stroke="#3E6A51" />
-                          <XAxis dataKey="producto" stroke="#3E6A51" />
+                          <CartesianGrid stroke="#50b3e5" />
+                          <XAxis dataKey="producto" stroke="#50b3e5" />
                           <YAxis domain={[0, 200000]} scale={'sqrt'} tickCount={15} tickFormatter={(value) => `$${value.toLocaleString()}`} />
                           <Tooltip />
                           <Legend />
-                          <Bar dataKey="monto_facturacion" barSize={30} fill="#27ae60" />
+                          <Bar dataKey="monto_facturacion" barSize={30} fill="#50b3e5" />
                         </ComposedChart>
                       </ResponsiveContainer>
                     </div>
@@ -256,17 +264,17 @@ const Analitics = () => {
                     <h4>Grafica Anual - PIE - Producto Oportunidad</h4>
                   </Card.Title>
                   <Card.Text>
-                    <div style={{ width: '100%', height: 600 }}>
+                    <div style={{ width: '100%', height: 800 }}>
                       <ResponsiveContainer>
                         <PieChart>
                           <Pie
                             dataKey="monto_facturacion"
                             isAnimationActive={true}
                             data={oportunidad}
-                            cx="30%"
-                            cy="50%"
-                            outerRadius={200}
-                            fill="#27ae60"
+                            cx="40%"
+                            cy="40%"
+                            outerRadius={300}
+                            labelLine={false}
                             label={({
                               cx,
                               cy,
@@ -281,20 +289,28 @@ const Analitics = () => {
                               const x = cx + radius * Math.cos(-midAngle * RADIAN);
                               const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
+                              const percent = ((value / oportunidad.reduce((sum, entry) => sum + entry.monto_facturacion, 0)) * 100).toFixed(2);
+
                               return (
                                 <text
                                   x={x}
                                   y={y}
-                                  fill="#3E6A51"
+                                  fill="#818282"
                                   textAnchor={x > cx ? 'start' : 'end'}
                                   dominantBaseline="central"
                                 >
-                                  {oportunidad[index].producto}
+                                  {`${oportunidad[index].producto} (${percent}%)`}
                                 </text>
                               );
                             }}
+                          >
+                            {oportunidad.map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
+                            ))}
+                          </Pie>
+                          <Tooltip
+                            formatter={(value, name, entry) => [`${entry.payload.producto}`, `$${value.toLocaleString()}`]}
                           />
-                          <Tooltip />
                         </PieChart>
                       </ResponsiveContainer>
                     </div>
@@ -314,8 +330,8 @@ const Analitics = () => {
               </Card.Title>
               <Card.Text>
                 <img
-                  src={`http://localhost:8000/get_anual_sales_line_graph_image`}
-                  alt="Anual Sales Graph"
+                  src={`http://localhost:8000/get_lineal_regresion_image`}
+                  alt="Lineal Regresion"
                   style={{ width: '90%' }}
                 />
               </Card.Text>

@@ -379,7 +379,6 @@ def anual_sales_line_graph():
     # data = response.data
 
     df = pd.DataFrame(data)
-    print(df)
     
     monthly_totals = df['monto_facturacion'].tolist()
     months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Sept.', 'Octubre', 'Nov.', 'Dic.']
@@ -420,12 +419,23 @@ def anual_sales_line_graph():
 #     except Exception as e:
 #         return JSONResponse(content={"error": str(e)}, status_code=500)
 
+@app.get("/get_lineal_regresion_image")
+async def get_lineal_regresion_image():
+    image_path = linear_regression()
+    # Check if the image file exists
+    if os.path.exists(image_path):
+        return FileResponse(image_path, media_type="image/png")
+    else:
+        return JSONResponse(content={"error": "Image not found"}, status_code=404)
 
 def linear_regression():
+    highest_id_response = supabase.from_('data').select('upload').order('upload', desc=True).limit(1).execute()
+    highest_id = highest_id_response.data[0]['upload']
     response1 = supabase.from_('data').select('monto_facturacion').eq('upload', highest_id).eq('total_tipo_venta', '– TOTAL DEL MES – ').limit(1000).execute() 
     data = response1.data
     
-    response2 = supabase.from_('data').select('monto_facturacion').eq('upload', 18).eq('total_tipo_venta', '– TOTAL DEL MES – ').limit(1000).execute()
+    print('hello')
+    response2 = supabase.from_('data').select('monto_facturacion').eq('upload', 35).eq('total_tipo_venta', '– TOTAL DEL MES – ').limit(1000).execute()
     data2 = response2.data
     df = pd.DataFrame(data)
     df2 = pd.DataFrame(data2)
@@ -475,10 +485,9 @@ def linear_regression():
 
     plt.legend(fontsize=12)
     plt.tight_layout()
-
-    plt.savefig('linear_regression_sales.png', dpi=300)
-
-    plt.show()
+    image_path = "linear_regression_sales.png"
+    plt.savefig(image_path)
+    return image_path
 
 @app.get("/get_producto_oportunidad")
 async def get_producto_oportunidad():
