@@ -15,12 +15,13 @@ import {
   PieChart,
   Pie,
   Cell,
-  Label
+  Label,
+  LabelList
 } from 'recharts';
 import axios from 'axios';
 import YearSelector from './availableYears';
 import MonthSelector from './monthSelect';
-
+import CustomPieLabel from './pielabels';
 const monthNames = {
   1: 'Enero',
   2: 'Febrero',
@@ -66,8 +67,8 @@ const Analitics = () => {
     const fetchClientes = async () => {
       try {
         const response = await axios.get('http://localhost:8000/get_clientes');
-        setClientes(response);
-        console.log(response)
+        setClientes(response.data.clientes);
+        console.log(response.data.clientes)
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -291,20 +292,25 @@ const Analitics = () => {
                               const radius = 25 + innerRadius + (outerRadius - innerRadius);
                               const x = cx + radius * Math.cos(-midAngle * RADIAN);
                               const y = cy + radius * Math.sin(-midAngle * RADIAN);
-
+                
                               const percent = ((value / oportunidad.reduce((sum, entry) => sum + entry.monto_facturacion, 0)) * 100).toFixed(2);
-
-                              return (
-                                <text
-                                  x={x}
-                                  y={y}
-                                  fill="#818282"
-                                  textAnchor={x > cx ? 'start' : 'end'}
-                                  dominantBaseline="central"
-                                >
-                                  {`${oportunidad[index].producto} (${percent}%)`}
-                                </text>
-                              );
+                
+                              // Conditionally render the label if percentage is greater than 3%
+                              if (parseFloat(percent) >= 3) {
+                                return (
+                                  <text
+                                    x={x}
+                                    y={y}
+                                    fill="#818282"
+                                    textAnchor={x > cx ? 'start' : 'end'}
+                                    dominantBaseline="central"
+                                  >
+                                    {`${oportunidad[index].producto} (${percent}%)`}
+                                  </text>
+                                );
+                              } else {
+                                return null; // Return null to skip rendering the label
+                              }
                             }}
                           >
                             {oportunidad.map((entry, index) => (
@@ -313,6 +319,71 @@ const Analitics = () => {
                           </Pie>
                           <Tooltip
                             formatter={(value, name, entry) => [`${entry.payload.producto}`, `$${value.toLocaleString()}`]}
+                          />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </Card.Text>
+                </Card>
+                <br />
+                <br />
+                <Card style={{ backgroundColor: "#ffffff", color: "#333", fontSize: 15, textAlign: "center", padding: "20px", borderRadius: '10px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)', }}>
+                  <Card.Title>
+                    <h4>Grafica Anual - PIE - Clientes</h4>
+                  </Card.Title>
+                  <Card.Text>
+                    <div style={{ width: '100%', height: 600 }}>
+                      <ResponsiveContainer>
+                        <PieChart>
+                          <Pie
+                            dataKey="monto_facturacion"
+                            isAnimationActive={true}
+                            data={clientes}
+                            cx="50%"
+                            cy="50%"
+                            outerRadius='80%'
+                            labelLine={false}
+
+                            label={({
+                              cx,
+                              cy,
+                              midAngle,
+                              innerRadius,
+                              outerRadius,
+                              value,
+                              index,
+                            }) => {
+                              const RADIAN = Math.PI / 180;
+                              const radius = 25 + innerRadius + (outerRadius - innerRadius);
+                              const x = cx + radius * Math.cos(-midAngle * RADIAN);
+                              const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+                              const percent = ((value / clientes.reduce((sum, entry) => sum + entry.monto_facturacion, 0)) * 100).toFixed(2);
+
+                              // Conditionally render the label if percentage is greater than 3%
+                              if (parseFloat(percent) >= 3) {
+                                return (
+                                  <text
+                                    x={x}
+                                    y={y}
+                                    fill="#818282"
+                                    textAnchor={x > cx ? 'start' : 'end'}
+                                    dominantBaseline="central"
+                                  >
+                                    {`${clientes[index].cliente} (${percent}%)`}
+                                  </text>
+                                );
+                              } else {
+                                return null; // Return null to skip rendering the label
+                              }
+                            }}
+                          >
+                            {clientes.map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
+                            ))}
+                          </Pie>
+                          <Tooltip
+                            formatter={(value, name, entry) => [`${entry.payload.cliente}`, `$${value.toLocaleString()}`]}
                           />
                         </PieChart>
                       </ResponsiveContainer>
