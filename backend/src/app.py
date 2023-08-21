@@ -384,20 +384,20 @@ def anual_sales_line_graph():
     months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Sept.', 'Octubre', 'Nov.', 'Dic.']
 
     plt.figure(figsize=(10, 6))  
-    plt.plot(months, monthly_totals, marker='o', color='#27ae60')
-    plt.title('Progresión de ventas' , color='#3E6A51')
-    plt.xlabel('Mes', color='#3E6A51')
-    plt.ylabel('Ventas totales', color='#3E6A51')
+    plt.plot(months, monthly_totals, marker='o', color='#50E5CD')
+    plt.title('Progresión de ventas' , color='#50b3e5')
+    plt.xlabel('Mes', color='#50b3e5')
+    plt.ylabel('Ventas totales', color='#50b3e5')
     plt.grid(True)
 
     ax = plt.gca()  # Get the current axes
 
     # Set the color of the graph border (spines)
     for spine in ax.spines.values():
-        spine.set_edgecolor('#3E6A51')
+        spine.set_edgecolor('#50b3e5')
 
     plt.yticks(range(100000, 1000001, 100000), ['$100,000', '$200,000', '$300,000', '$400,000', '$500,000', '$600,000', '$700,000', '$800,000', '$900,000', '$1,000,000'])
-    plt.xticks(rotation=45, color='#3E6A51')
+    plt.xticks(rotation=45, color='#50b3e5')
 
     dot_indices = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]  
 
@@ -434,7 +434,6 @@ def linear_regression():
     response1 = supabase.from_('data').select('monto_facturacion').eq('upload', highest_id).eq('total_tipo_venta', '– TOTAL DEL MES – ').limit(1000).execute() 
     data = response1.data
     
-    print('hello')
     response2 = supabase.from_('data').select('monto_facturacion').eq('upload', 35).eq('total_tipo_venta', '– TOTAL DEL MES – ').limit(1000).execute()
     data2 = response2.data
     df = pd.DataFrame(data)
@@ -457,11 +456,11 @@ def linear_regression():
     model.fit(X, y)
 
     y_pred = model.predict(X)
-    plt.scatter(combined_months[12:], year2_sales, color='green', label='Ventas en 2023', s=80)
-    plt.scatter(combined_months[:12], year1_sales, color='blue', label='Ventas en 2022', s=80)
+    plt.scatter(combined_months[12:], year2_sales, color='#ffc416', label='Ventas en 2023', s=80)
+    plt.scatter(combined_months[:12], year1_sales, color='#50b3e5', label='Ventas en 2022', s=80)
     
     
-    plt.plot(combined_months, y_pred, label='Combined Regression Line', color='red', linewidth=1.5)
+    plt.plot(combined_months, y_pred, label='Combined Regression Line', color='#50E5CD', linewidth=1.5)
 
     total_sales = 0
     for i, txt in enumerate(y_pred):
