@@ -519,10 +519,7 @@ def producto_oportunidad_query():
     return array
 
 def clientes():
-    file_path = "processed_data (10).csv"
-    df = pd.read_csv(file_path)
-
-    clientes = df['Cuenta'].unique()
+    clientes = ['Grupo Codaca', 'Industrias Alimenticias Kern´s', 'Kellogg de Guatemala', 'Registro Nacional de las Personas', 'GT - Banco Agromercantil de Guatemala  - BAM -', 'GT - Banco Industrial', 'HN - Banco del Pais', 'Sertracen Ecuador', 'Transunión Guatemala S.A.', 'COFIÑO STAHL', 'Instituto de Fomento de Hipotecas Aseguradas - FHA -', 'SV One Solution', 'GT - Banco Crédito Hipotecario Nacional', 'GT - Grupo Terra', 'Comdata Guatemala SA', '4 Carriles S.A.', 'Infile S.A.', 'GT - ViviBanco Guatemala', 'SOPESA', 'GSI Dominicana', 'Sertracen Panamá', 'Instituto Salvadoreño del Seguro Social', 'Spectrum S.A.','SV - Sertracen', 'SV - Banco Industrial','Instituto Guatemalteco de Migración', 'Superintendencia de Bancos','Superintendencia de Administración Tributaria', 'CitiBank Guatemala NA','Edgar Elias', 'Instituto Nacional de Electrificación INDE', 'Registro Mercantil General de la República de Guatemala', 'vLEX LLC', 'Municipalidad de Guatemala', 'Nery Aldana', 'GT - AmigoPAQ', 'GT - Luma Holdings (NEXA)', 'COE GSI', 'Thales', 'Ingrup', 'SV Banco Cuscatlán El Salvador', 'SV - Banco Agricola', 'GIGA S.A. de C.V.', 'GT - Banco Ficohsa Guatemala S.A.', 'Ministerio de Defensa', 'Gestionadora de Creditos', 'GT - Banco INV', 'GT - Interconsumo S.A.', 'Documentos Inteligentes SV', 'Confederación Deportiva Autónoma de Guatemala', 'Ministerio de Cultura y Deportes', 'Corporación Multi Inversiones', 'Organismo Judicial', 'Administrador del Mercado Mayorista AMM', 'Fomilenio', 'SV Banco Azul de El Salvador', 'GT Banco Promérica', 'Osmo Wallet', 'Banco de los Trabajadores']
 
     final_list = []
     for cliente in clientes:
