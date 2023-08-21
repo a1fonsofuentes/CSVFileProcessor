@@ -451,14 +451,18 @@ def linear_regression():
     plt.scatter(combined_months[:12], year1_sales, color='blue', label='Ventas en 2022', s=80)
     
     
-    plt.plot(combined_months, y_pred, label='Combined Regression Line', color='red', linewidth=2)
+    plt.plot(combined_months, y_pred, label='Combined Regression Line', color='red', linewidth=1.5)
 
+    total_sales = 0
     for i, txt in enumerate(y_pred):
         plt.annotate(f'${int(txt):,}', (combined_months[i], txt), textcoords="offset points", xytext=(0,10), ha='center')
+        total_sales += txt
 
     coef = model.coef_[0]
     intercept = model.intercept_
-    plt.text(6, 900000, f'Regression Line: y = {coef:.2f}x + {intercept:.2f}', fontsize=12, color='purple')
+    plt.text(6, 900000, f'Regression Line: y = {coef:.2f}x + {intercept:.2f}', fontsize=12, color='black')
+    plt.text(6, 800000, f'Predicción de ventas totales : ${int(total_sales):,}', fontsize=12, color='blue')
+
 
     plt.title('Modelo de regresión lineal de ventas totales', fontsize=16)
     plt.xlabel('Mes', fontsize=14)
