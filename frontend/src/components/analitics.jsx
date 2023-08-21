@@ -251,7 +251,7 @@ const Analitics = () => {
                           <YAxis domain={[0, 200000]} scale={'sqrt'} tickCount={15} tickFormatter={(value) => `$${value.toLocaleString()}`} />
                           <Tooltip />
                           <Legend />
-                          <Bar dataKey="monto_facturacion" barSize={30} fill="#50b3e5" />
+                          <Bar dataKey="monto_facturacion" barSize={30} fill="#ffc416" />
                         </ComposedChart>
                       </ResponsiveContainer>
                     </div>
@@ -264,16 +264,16 @@ const Analitics = () => {
                     <h4>Grafica Anual - PIE - Producto Oportunidad</h4>
                   </Card.Title>
                   <Card.Text>
-                    <div style={{ width: '100%', height: 800 }}>
+                    <div style={{ width: '100%', height: 600 }}>
                       <ResponsiveContainer>
                         <PieChart>
                           <Pie
                             dataKey="monto_facturacion"
                             isAnimationActive={true}
                             data={oportunidad}
-                            cx="40%"
-                            cy="40%"
-                            outerRadius={300}
+                            cx="50%"
+                            cy="50%"
+                            outerRadius='80%'
                             labelLine={false}
                             label={({
                               cx,

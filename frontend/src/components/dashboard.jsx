@@ -197,13 +197,13 @@ const Dashboard = () => {
                     <Col>
                         <Nav variant="tabs" defaultActiveKey={'file'} onSelect={handleTabSelect}>
                             <Nav.Item>
-                                <Nav.Link eventKey={'file'} style={{ color: ((nav == 'default') ? '#387DA0' : '#818282'), }}>Visualizar Archivo Procesado</Nav.Link>
+                                <Nav.Link eventKey={'file'} style={{ color: ((nav == 'default') ? '#387DA0' : '#5A5B5B'), }}>Visualizar Archivo Procesado</Nav.Link>
                             </Nav.Item>
                             <Nav.Item>
-                                <Nav.Link eventKey={'linkHistorico'} style={{ color: ((nav == 'historico') ? '#387DA0' : '#818282'), }}>Historico</Nav.Link>
+                                <Nav.Link eventKey={'linkHistorico'} style={{ color: ((nav == 'historico') ? '#387DA0' : '#5A5B5B'), }}>Historico</Nav.Link>
                             </Nav.Item>
                             <Nav.Item>
-                                <Nav.Link eventKey={'linkAnalitics'} style={{ color: ((nav == 'anal') ? '#387DA0' : '#818282'), }}>Analytics</Nav.Link>
+                                <Nav.Link eventKey={'linkAnalitics'} style={{ color: ((nav == 'anal') ? '#387DA0' : '#5A5B5B'), }}>Analytics</Nav.Link>
                             </Nav.Item>
                         </Nav>
                     </Col>
