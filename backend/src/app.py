@@ -447,15 +447,22 @@ def linear_regression():
     model.fit(X, y)
 
     y_pred = model.predict(X)
-
-    plt.scatter(combined_months[:12], year1_sales, color='blue', label='Year 1 Data', s=80)
-    plt.scatter(combined_months[12:], year2_sales, color='green', label='Year 2 Data', s=80)
+    plt.scatter(combined_months[12:], year2_sales, color='green', label='Ventas en 2023', s=80)
+    plt.scatter(combined_months[:12], year1_sales, color='blue', label='Ventas en 2022', s=80)
+    
     
     plt.plot(combined_months, y_pred, label='Combined Regression Line', color='red', linewidth=2)
 
-    plt.title('Linear Regression of Total Sales', fontsize=16)
-    plt.xlabel('Month', fontsize=14)
-    plt.ylabel('Total Sales', fontsize=14)
+    for i, txt in enumerate(y_pred):
+        plt.annotate(f'${int(txt):,}', (combined_months[i], txt), textcoords="offset points", xytext=(0,10), ha='center')
+
+    coef = model.coef_[0]
+    intercept = model.intercept_
+    plt.text(6, 900000, f'Regression Line: y = {coef:.2f}x + {intercept:.2f}', fontsize=12, color='purple')
+
+    plt.title('Modelo de regresión lineal de ventas totales', fontsize=16)
+    plt.xlabel('Mes', fontsize=14)
+    plt.ylabel('Ventas Totales', fontsize=14)
     plt.legend(fontsize=12, loc='upper left')  
 
     plt.grid(True, alpha=0.5)
