@@ -41,6 +41,7 @@ const colors = ['#818282', '#50E5CD', '#50b3e5', '#FFCF44', '#387DA0', '#84C9EC'
 const Analitics = () => {
   const [data, setData] = useState([]);
   const [oportunidad, setOportunidad] = useState([]);
+  const [clientes, setClientes] = useState([]);
   const [selectedYear, setSelectedYear] = useState('');
   const [availableYears, setAvailableYears] = useState([]);
   const [selectedMonth, setSelectedMonth] = useState('1');
@@ -58,6 +59,14 @@ const Analitics = () => {
       try {
         const response = await axios.get('http://localhost:8000/get_producto_oportunidad');
         setOportunidad(response.data.producto_oportunidad);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+    const fetchClientes = async () => {
+      try {
+        const response = await axios.get('http://localhost:8000/get_clientes');
+        setClientes(response);
         console.log(response)
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -73,6 +82,7 @@ const Analitics = () => {
     //   }
     // };
     fetchOportunidad();
+    fetchClientes();
     fetchData();
     // fetchAvailableYears();
 
@@ -119,14 +129,7 @@ const Analitics = () => {
     }
     return totals;
   }, {});
-  const calculateLabelPosition = (cx, cy, radius, angle) => {
-    const radianAngle = (angle - 90) * (Math.PI / 180);
-    const x = cx + radius * Math.cos(radianAngle);
-    const y = cy + radius * Math.sin(radianAngle);
-    return { x, y };
-  };
   const chartData = Object.values(tipoVentaTotals);
-  const totalMontoFacturacion = oportunidad.reduce((total, entry) => total + entry.monto_facturacion, 0);
   return (
     <Row>
       <Col className="justify-content-md-center">

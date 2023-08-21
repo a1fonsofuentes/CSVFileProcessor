@@ -433,7 +433,7 @@ def linear_regression():
     highest_id = highest_id_response.data[0]['upload']
     response1 = supabase.from_('data').select('monto_facturacion').eq('upload', highest_id).eq('total_tipo_venta', '– TOTAL DEL MES – ').limit(1000).execute() 
     data = response1.data
-    
+
     response2 = supabase.from_('data').select('monto_facturacion').eq('upload', 35).eq('total_tipo_venta', '– TOTAL DEL MES – ').limit(1000).execute()
     data2 = response2.data
     df = pd.DataFrame(data)
@@ -518,9 +518,15 @@ def producto_oportunidad_query():
 
     return array
 
-def clientes():
-    clientes = ['Grupo Codaca', 'Industrias Alimenticias Kern´s', 'Kellogg de Guatemala', 'Registro Nacional de las Personas', 'GT - Banco Agromercantil de Guatemala  - BAM -', 'GT - Banco Industrial', 'HN - Banco del Pais', 'Sertracen Ecuador', 'Transunión Guatemala S.A.', 'COFIÑO STAHL', 'Instituto de Fomento de Hipotecas Aseguradas - FHA -', 'SV One Solution', 'GT - Banco Crédito Hipotecario Nacional', 'GT - Grupo Terra', 'Comdata Guatemala SA', '4 Carriles S.A.', 'Infile S.A.', 'GT - ViviBanco Guatemala', 'SOPESA', 'GSI Dominicana', 'Sertracen Panamá', 'Instituto Salvadoreño del Seguro Social', 'Spectrum S.A.','SV - Sertracen', 'SV - Banco Industrial','Instituto Guatemalteco de Migración', 'Superintendencia de Bancos','Superintendencia de Administración Tributaria', 'CitiBank Guatemala NA','Edgar Elias', 'Instituto Nacional de Electrificación INDE', 'Registro Mercantil General de la República de Guatemala', 'vLEX LLC', 'Municipalidad de Guatemala', 'Nery Aldana', 'GT - AmigoPAQ', 'GT - Luma Holdings (NEXA)', 'COE GSI', 'Thales', 'Ingrup', 'SV Banco Cuscatlán El Salvador', 'SV - Banco Agricola', 'GIGA S.A. de C.V.', 'GT - Banco Ficohsa Guatemala S.A.', 'Ministerio de Defensa', 'Gestionadora de Creditos', 'GT - Banco INV', 'GT - Interconsumo S.A.', 'Documentos Inteligentes SV', 'Confederación Deportiva Autónoma de Guatemala', 'Ministerio de Cultura y Deportes', 'Corporación Multi Inversiones', 'Organismo Judicial', 'Administrador del Mercado Mayorista AMM', 'Fomilenio', 'SV Banco Azul de El Salvador', 'GT Banco Promérica', 'Osmo Wallet', 'Banco de los Trabajadores']
+@app.get("/get_clientes")
+async def get_clientes():
+    clientes_data = clientes()
+    return {"clientes": clientes_data}
 
+def clientes():
+    highest_id_response = supabase.from_('data').select('upload').order('upload', desc=True).limit(1).execute()
+    highest_id = highest_id_response.data[0]['upload']
+    clientes = ['Grupo Codaca', 'Industrias Alimenticias Kern´s', 'Kellogg de Guatemala', 'Registro Nacional de las Personas', 'GT - Banco Agromercantil de Guatemala  - BAM -', 'GT - Banco Industrial', 'HN - Banco del Pais', 'Sertracen Ecuador', 'Transunión Guatemala S.A.', 'COFIÑO STAHL', 'Instituto de Fomento de Hipotecas Aseguradas - FHA -', 'SV One Solution', 'GT - Banco Crédito Hipotecario Nacional', 'GT - Grupo Terra', 'Comdata Guatemala SA', '4 Carriles S.A.', 'Infile S.A.', 'GT - ViviBanco Guatemala', 'SOPESA', 'GSI Dominicana', 'Sertracen Panamá', 'Instituto Salvadoreño del Seguro Social', 'Spectrum S.A.','SV - Sertracen', 'SV - Banco Industrial','Instituto Guatemalteco de Migración', 'Superintendencia de Bancos','Superintendencia de Administración Tributaria', 'CitiBank Guatemala NA','Edgar Elias', 'Instituto Nacional de Electrificación INDE', 'Registro Mercantil General de la República de Guatemala', 'vLEX LLC', 'Municipalidad de Guatemala', 'Nery Aldana', 'GT - AmigoPAQ', 'GT - Luma Holdings (NEXA)', 'COE GSI', 'Thales', 'Ingrup', 'SV Banco Cuscatlán El Salvador', 'SV - Banco Agricola', 'GIGA S.A. de C.V.', 'GT - Banco Ficohsa Guatemala S.A.', 'Ministerio de Defensa', 'Gestionadora de Creditos', 'GT - Banco INV', 'GT - Interconsumo S.A.', 'Documentos Inteligentes SV', 'Confederación Deportiva Autónoma de Guatemala', 'Ministerio de Cultura y Deportes', 'Corporación Multi Inversiones', 'Organismo Judicial', 'Administrador del Mercado Mayorista AMM', 'Fomilenio', 'SV Banco Azul de El Salvador', 'GT Banco Promérica', 'Osmo Wallet', 'Banco de los Trabajadores']
     final_list = []
     for cliente in clientes:
         response = supabase.from_('data').select('monto_facturacion').eq('upload', highest_id).eq('cuenta', cliente).limit(1000).execute()
