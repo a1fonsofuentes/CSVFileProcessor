@@ -15,6 +15,8 @@ from supabase import create_client
 import matplotlib.pyplot as plt
 import numpy as np
 import mplcursors
+from sklearn.linear_model import LinearRegression
+
 from typing import List
 
 app = FastAPI()
@@ -418,28 +420,6 @@ def anual_sales_line_graph():
 #     except Exception as e:
 #         return JSONResponse(content={"error": str(e)}, status_code=500)
 
-def producto_oportunidad():
-    dataframes = []
-    final_list = []
-    productos = ['DIGITALIZACION', 'GEMALTO PVC', 'CAMI APP', 'ONBASE', 'E-POWER', 'OTROS', 'FUJITSU', 'GEMALTO', 'BIZAGI']
-    month = 1
-
-    for producto in productos:
-        response = supabase.from_('data').select('monto_facturacion').eq('upload', highest_id).eq('producto', producto).limit(1000).execute()
-        data = response.data
-        dataframes.append((pd.DataFrame(data))['monto_facturacion'].tolist())
-    
-    for i in range(len(dataframes)):
-        final_list.append(sum(dataframes[i]))
-    
-    array = []
-    for i, product in enumerate(productos):
-        array.append({
-            'producto': product,
-            'monto_facturacion': final_list[i]
-        })
-
-    return array
 
 def linear_regression():
     response1 = supabase.from_('data').select('monto_facturacion').eq('upload', highest_id).eq('total_tipo_venta', '– TOTAL DEL MES – ').limit(1000).execute() 
@@ -493,3 +473,30 @@ if __name__ == "__main__":
     import uvicorn
 
     uvicorn.run(app, host="0.0.0.0", port=8000)
+
+def producto_oportunidad_query():
+    highest_id_response = supabase.from_('data').select('upload').order('upload', desc=True).limit(1).execute()
+    highest_id = highest_id_response.data[0]['upload']
+
+    dataframes = []
+    final_list = []
+    productos = ['DIGITALIZACION', 'GEMALTO PVC', 'CAMI APP', 'ONBASE', 'E-POWER', 'OTROS', 'FUJITSU', 'GEMALTO', 'BIZAGI']
+    month = 1
+
+    for producto in productos:
+        response = supabase.from_('data').select('monto_facturacion').eq('upload', highest_id).eq('producto', producto).limit(1000).execute()
+        data = response.data
+        dataframes.append((pd.DataFrame(data))['monto_facturacion'].tolist())
+    
+    for i in range(len(dataframes)):
+        final_list.append(sum(dataframes[i]))
+    
+    array = []
+    for i, product in enumerate(productos):
+        array.append({
+            'producto': product,
+            'monto_facturacion': final_list[i]
+        })
+
+    return array
+
