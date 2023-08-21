@@ -12,6 +12,9 @@ import {
   Legend,
   Scatter,
   ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
 } from 'recharts';
 import axios from 'axios';
 import YearSelector from './availableYears';
@@ -34,6 +37,7 @@ const monthNames = {
 
 const Analitics = () => {
   const [data, setData] = useState([]);
+  const [oportunidad, setOportunidad] = useState([]);
   const [selectedYear, setSelectedYear] = useState('');
   const [availableYears, setAvailableYears] = useState([]);
   const [selectedMonth, setSelectedMonth] = useState('1');
@@ -47,6 +51,16 @@ const Analitics = () => {
         console.error('Error fetching data:', error);
       }
     };
+    const fetchOportunidad = async () => {
+      try {
+        const response = await axios.get('http://localhost:8000/get_producto_oportunidad');
+        setOportunidad(response.data.producto_oportunidad);
+        console.log(response)
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
     // const fetchAvailableYears = async () => {
     //   try {
     //     const response = await axios.get('http://localhost:8000/get_available_years'); will be implimented later on xdxd
@@ -55,13 +69,14 @@ const Analitics = () => {
     //     console.error('Error fetching available years:', error);
     //   }
     // };
+    fetchOportunidad();
     fetchData();
     // fetchAvailableYears();
+
   }, []);
 
   const filterDataByMonthAndTipoVenta = (selectedMonth) => {
     const filteredData = data.filter((entry) => entry.month === parseInt(selectedMonth) && entry.total_tipo_venta !== '– TOTAL DEL MES – ');
-    console.log(data)
     const aggregatedData = filteredData.reduce((result, entry) => {
       const tipoVenta = entry.total_tipo_venta;
       const utilidad = entry.utilidad;
@@ -99,7 +114,6 @@ const Analitics = () => {
       totals[total_tipo_venta].utilidad_total += utilidad;
       totals[total_tipo_venta].monto_facturacion_total += monto_facturacion;
     }
-    console.log(selectedMonth)
     return totals;
   }, {});
 
@@ -159,7 +173,6 @@ const Analitics = () => {
                             left: 20,
                           }}
                         >
-                          {console.log(filterDataByMonthAndTipoVenta(selectedMonth))}
                           <CartesianGrid stroke="#3E6A51" />
                           <XAxis dataKey="total_tipo_venta" stroke="#3E6A51" />
                           <YAxis scale={'sqrt'} tickCount={15} tickFormatter={(value) => `$${value.toLocaleString()}`} />
@@ -192,7 +205,6 @@ const Analitics = () => {
                             left: 30,
                           }}
                         >
-                          {console.log(chartData)}
                           <CartesianGrid stroke="#3E6A51" />
                           <XAxis dataKey="total_tipo_venta" stroke="#3E6A51" />
                           <YAxis domain={[0, 200000]} scale={'sqrt'} tickCount={15} tickFormatter={(value) => `$${value.toLocaleString()}`} />
@@ -205,10 +217,109 @@ const Analitics = () => {
                     </div>
                   </Card.Text>
                 </Card>
+                <br />
+                <br />
+                <Card style={{ backgroundColor: "#ffffff", color: "#333", fontSize: 15, textAlign: "center", padding: "20px", borderRadius: '10px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)', }}>
+                  <Card.Title>
+                    <h4>Grafica Anual - Producto Oportunidad</h4>
+                  </Card.Title>
+                  <Card.Text>
+                    <div style={{ width: '100%', height: 600 }}>
+                      <ResponsiveContainer>
+                        <ComposedChart
+                          width={1200}
+                          height={600}
+                          data={oportunidad}
+                          margin={{
+                            top: 20,
+                            right: 20,
+                            bottom: 20,
+                            left: 30,
+                          }}
+                        >
+                          {console.log(oportunidad)}
+                          <CartesianGrid stroke="#3E6A51" />
+                          <XAxis dataKey="producto" stroke="#3E6A51" />
+                          <YAxis domain={[0, 200000]} scale={'sqrt'} tickCount={15} tickFormatter={(value) => `$${value.toLocaleString()}`} />
+                          <Tooltip />
+                          <Legend />
+                          <Bar dataKey="monto_facturacion" barSize={30} fill="#27ae60" />
+                        </ComposedChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </Card.Text>
+                </Card>
+                <br />
+                <br />
+                <Card style={{ backgroundColor: "#ffffff", color: "#333", fontSize: 15, textAlign: "center", padding: "20px", borderRadius: '10px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)', }}>
+                  <Card.Title>
+                    <h4>Grafica Anual - PIE - Producto Oportunidad</h4>
+                  </Card.Title>
+                  <Card.Text>
+                    <div style={{ width: '100%', height: 600 }}>
+                      <ResponsiveContainer>
+                        <PieChart>
+                          <Pie
+                            dataKey="monto_facturacion"
+                            isAnimationActive={true}
+                            data={oportunidad}
+                            cx="30%"
+                            cy="50%"
+                            outerRadius={200}
+                            fill="#27ae60"
+                            label={({
+                              cx,
+                              cy,
+                              midAngle,
+                              innerRadius,
+                              outerRadius,
+                              value,
+                              index,
+                            }) => {
+                              const RADIAN = Math.PI / 180;
+                              const radius = 25 + innerRadius + (outerRadius - innerRadius);
+                              const x = cx + radius * Math.cos(-midAngle * RADIAN);
+                              const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+                              return (
+                                <text
+                                  x={x}
+                                  y={y}
+                                  fill="#3E6A51"
+                                  textAnchor={x > cx ? 'start' : 'end'}
+                                  dominantBaseline="central"
+                                >
+                                  {oportunidad[index].producto}
+                                </text>
+                              );
+                            }}
+                          />
+                          <Tooltip />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </Card.Text>
+                </Card>
               </>
             ) : (
-              <p>Loading...</p>
+              <div className="text-center">
+                <br /><br /><br /><Spinner animation="border" variant="warning" />
+              </div>
             )}
+            <br />
+            <br />
+            <Card style={{ backgroundColor: "#ffffff", color: "#333", fontSize: 15, textAlign: "center", padding: "20px", borderRadius: '10px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)', }}>
+              <Card.Title>
+                <h4>Grafica anual - Ventas</h4>
+              </Card.Title>
+              <Card.Text>
+                <img
+                  src={`http://localhost:8000/get_anual_sales_line_graph_image`}
+                  alt="Anual Sales Graph"
+                  style={{ width: '90%' }}
+                />
+              </Card.Text>
+            </Card>
             <br />
             <br />
           </Card.Text>

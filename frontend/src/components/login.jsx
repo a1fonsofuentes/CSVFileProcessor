@@ -87,7 +87,7 @@ const Login = () => {
                             <Image src="https://app.camiapp.net/assets/Logo-8a7d2727.svg" width={"35%"} rounded />
                         </Stack>
                         <br />
-                        Hello! This is a Log In
+                        Log In
                     </Card.Title>
                     <Form.Group>
                         <Form.Label style={styles.formLabel}>Email</Form.Label>

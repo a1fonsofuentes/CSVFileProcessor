@@ -480,10 +480,10 @@ def linear_regression():
 
     plt.show()
 
-if __name__ == "__main__":
-    import uvicorn
-
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+@app.get("/get_producto_oportunidad")
+async def get_producto_oportunidad():
+    producto_oportunidad_data = producto_oportunidad_query()
+    return {"producto_oportunidad": producto_oportunidad_data}
 
 def producto_oportunidad_query():
     highest_id_response = supabase.from_('data').select('upload').order('upload', desc=True).limit(1).execute()
@@ -492,7 +492,6 @@ def producto_oportunidad_query():
     dataframes = []
     final_list = []
     productos = ['DIGITALIZACION', 'GEMALTO PVC', 'CAMI APP', 'ONBASE', 'E-POWER', 'OTROS', 'FUJITSU', 'GEMALTO', 'BIZAGI']
-    month = 1
 
     for producto in productos:
         response = supabase.from_('data').select('monto_facturacion').eq('upload', highest_id).eq('producto', producto).limit(1000).execute()
@@ -510,4 +509,9 @@ def producto_oportunidad_query():
         })
 
     return array
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run(app, host="0.0.0.0", port=8000)
 

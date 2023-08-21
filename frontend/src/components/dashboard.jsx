@@ -155,7 +155,7 @@ const Dashboard = () => {
                                     <Image src="https://app.camiapp.net/assets/Logo-8a7d2727.svg" width={"25%"} rounded />
                                 </Stack>
                                 <br />
-                                CSV File Processor
+                                Camilitics
                             </Card.Title>
                             <Card.Subtitle style={{ color: "#27ae60", fontSize: "16px", marginBottom: "20px" }}>
                                 Upload your file, and download the processed data
