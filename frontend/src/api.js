@@ -20,7 +20,7 @@ export async function loginUser(username, password) {
   const credentials = `${username}:${password}`;
   const encodedCredentials = btoa(credentials); // Base64 encode the credentials
 
-  const response = await fetch(`${BASE_URL}/users/login`, {
+  const response = await fetch(`${BASE_URL}/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -28,7 +28,7 @@ export async function loginUser(username, password) {
     },
     body: JSON.stringify({}), // No need to send an empty body for basic authentication
   });
-  console.log(response.status)
+  console.log(response)
   if (response.status == 200) {
     localStorage.setItem("user", username)
   }

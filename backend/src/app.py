@@ -1,4 +1,4 @@
-from fastapi import FastAPI, File, UploadFile, Depends, HTTPException, APIRouter, status, Header
+from fastapi import FastAPI, File, UploadFile, Depends, HTTPException, APIRouter, status, Header, Security
 from pydantic import BaseModel
 import pandas as pd
 import re
@@ -16,7 +16,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import mplcursors
 from sklearn.linear_model import LinearRegression
-
 from typing import List
 
 app = FastAPI()
@@ -44,84 +43,32 @@ SECRET_KEY = "your_secret_key"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
+security = HTTPBasic()
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-password = "password123"
-hashed_password = pwd_context.hash(password)
-# Sample user data (replace with your actual user data from the database)
-fake_users_db = {
-    "john_doe": {
-        "username": "john_doe",
-        "hashed_password": hashed_password,  # Hashed password: "password123"
-    }
-}
-
-
-
-def verify_password(plain_password, hashed_password):
-    result = pwd_context.verify(plain_password, hashed_password)
-    print("Verification Result:", result, flush=True)
-    return result
-
-def get_user(username: str):
-    print(username)
-    if username in fake_users_db:
-        user_dict = fake_users_db[username]
-        return user_dict
-
-
-def authenticate_user(credentials: HTTPBasicCredentials = Depends(HTTPBasic())):
-    user = get_user(credentials.username)
-    print("Received credentials type:", type(credentials))  # Add this print statement
-    if user is None or not verify_password(credentials.password, user["hashed_password"]):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid credentials",
-            headers={"WWW-Authenticate": "Basic"},
-        )
-    print(credentials.username)
-    return user
-
-
-def create_access_token(data: dict):
-    print("Received data for creating access token:", data)  # Add this print statement
-    to_encode = data.copy()
-    print(to_encode)  # Add this print statement
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-    print(encoded_jwt)  # Add this print statement
-    return encoded_jwt
 
 origins = ["http://localhost:5173"]  # front-end server
 app.add_middleware(CORSMiddleware, allow_origins=origins, allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
 
 router = APIRouter()
 
-def get_credentials(authorization: str = Header(None)):
-    if not authorization:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid credentials",
-            headers={"WWW-Authenticate": "Basic"},
-        )
-    scheme, credentials = authorization.split()
-    if scheme.lower() != "basic":
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid credentials",
-            headers={"WWW-Authenticate": "Basic"},
-        )
-    decoded_credentials = base64.b64decode(credentials).decode("utf-8")
-    username, _, password = decoded_credentials.partition(":")
-    return HTTPBasicCredentials(username=username, password=password)
+@app.post("/login")
+def login(credentials: HTTPBasicCredentials = Depends(security)):
+    user_name = credentials.username
+    user_password = credentials.password
+    user = supabase.table("users").select("*").eq("username", user_name).limit(1).execute().data
+    if user:
+        stored_hashed_password = user[0]['hashedpassword']
+    else:
+        raise HTTPException(status_code=404, detail="User not found")
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    
+    if not pwd_context.verify(user_password, stored_hashed_password):
+        raise HTTPException(status_code=401, detail="Invalid credentials")
 
-@router.post("/login", tags=["authentication"])
-async def login(authorization: HTTPBasicCredentials = Depends(get_credentials)):
-    user = authenticate_user(authorization)
-    access_token = create_access_token({"sub": user["username"]})
-    return {"access_token": access_token, "token_type": "bearer"}
-
-app.include_router(router, prefix="/users", tags=["users"])
+    token = jwt.encode({"sub": user_name}, SECRET_KEY, algorithm="HS256")
+    return {"access_token": token, "token_type": "bearer"}
 
 
 #Data model
