@@ -116,6 +116,34 @@ const Analitics = () => {
   };
 
 
+  const calculateTicks = (dataMax) => {
+    const additionalTicks = [5000, 20000, 50000, 100000, 500000, 1000000]; // Custom tick values
+    const maxTickCount = 12; // You can adjust this as needed
+    let tickInterval = Math.ceil(dataMax / maxTickCount);
+  
+    // Round tickInterval to the next thousand or million
+    const magnitude = Math.pow(10, Math.floor(Math.log10(tickInterval)));
+    if (tickInterval > 5 * magnitude) {
+      tickInterval = 10 * magnitude;
+    } else if (tickInterval > 2 * magnitude) {
+      tickInterval = 5 * magnitude;
+    } else if (tickInterval > magnitude) {
+      tickInterval = 2 * magnitude;
+    }
+  
+    const ticks = [];
+  
+    // Add the custom additional ticks
+    ticks.push(...additionalTicks.filter((tick) => tick <= dataMax));
+  
+    // Generate dynamic ticks
+    for (let i = tickInterval; i <= dataMax; i += tickInterval) {
+      ticks.push(i);
+    }
+  
+    return ticks;
+  };
+
   const tipoVentaTotals = data.reduce((totals, item) => {
     const { total_tipo_venta, utilidad, monto_facturacion } = item;
     if (total_tipo_venta !== '– TOTAL DEL MES – ') {
@@ -132,6 +160,7 @@ const Analitics = () => {
     }
     return totals;
   }, {});
+
   const chartData = Object.values(tipoVentaTotals);
   return (
     <Row>
@@ -189,7 +218,7 @@ const Analitics = () => {
                         >
                           <CartesianGrid stroke="#50b3e5" />
                           <XAxis dataKey="total_tipo_venta" stroke="#50b3e5" />
-                          <YAxis scale={'sqrt'} tickCount={15} tickFormatter={(value) => `$${value.toLocaleString()}`} />
+                          <YAxis scale={'sqrt'} ticks={calculateTicks(Math.max(...filterDataByMonthAndTipoVenta(selectedMonth).map(entry => entry.monto_facturacion_total)))} tickCount={15} tickFormatter={(value) => `$${value.toLocaleString()}`} />
                           <Tooltip />
                           <Legend />
                           <Bar dataKey="utilidad_total" barSize={30} fill="#ffc416" />
@@ -219,10 +248,9 @@ const Analitics = () => {
                             left: 30,
                           }}
                         >
-                          {console.log(chartData)}
                           <CartesianGrid stroke="#50b3e5" />
                           <XAxis dataKey="total_tipo_venta" stroke="#50b3e5" />
-                          <YAxis domain={[0, 200000]} scale={'sqrt'} tickCount={15} tickFormatter={(value) => `$${value.toLocaleString()}`} />
+                          <YAxis ticks={calculateTicks(Math.max(...chartData.map(entry => entry.monto_facturacion_total)))} scale={'sqrt'} tickCount={15} tickFormatter={(value) => `$${value.toLocaleString()}`} />
                           <Tooltip />
                           <Legend />
                           <Bar dataKey="utilidad_total" barSize={30} fill="#ffc416" />
@@ -295,9 +323,9 @@ const Analitics = () => {
                               const radius = 25 + innerRadius + (outerRadius - innerRadius);
                               const x = cx + radius * Math.cos(-midAngle * RADIAN);
                               const y = cy + radius * Math.sin(-midAngle * RADIAN);
-                
+
                               const percent = ((value / oportunidad.reduce((sum, entry) => sum + entry.monto_facturacion, 0)) * 100).toFixed(2);
-                
+
                               // Conditionally render the label if percentage is greater than 3%
                               if (parseFloat(percent) >= 3) {
                                 return (
