@@ -339,7 +339,7 @@ const Analitics = () => {
                             dataKey="monto_facturacion"
                             isAnimationActive={true}
                             data={clientes}
-                            cx="50%"
+                            cx="40%"
                             cy="50%"
                             outerRadius='80%'
                             labelLine={false}
