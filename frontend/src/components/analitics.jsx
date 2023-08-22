@@ -283,7 +283,7 @@ const Analitics = () => {
                           {console.log(oportunidad)}
                           <CartesianGrid stroke="#50b3e5" />
                           <XAxis dataKey="producto" stroke="#50b3e5" />
-                          <YAxis domain={[0, 200000]} scale={'sqrt'} tickCount={15} tickFormatter={(value) => `$${value.toLocaleString()}`} />
+                          <YAxis ticks={calculateTicks(Math.max(...oportunidad.map(entry => entry.monto_facturacion)))} scale={'sqrt'} tickCount={15} tickFormatter={(value) => `$${value.toLocaleString()}`} />
                           <Tooltip />
                           <Legend />
                           <Bar dataKey="monto_facturacion" barSize={30} fill="#ffc416" />
