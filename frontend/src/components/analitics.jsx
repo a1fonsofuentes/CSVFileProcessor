@@ -118,15 +118,17 @@ const Analitics = () => {
 
   const tipoVentaTotals = data.reduce((totals, item) => {
     const { total_tipo_venta, utilidad, monto_facturacion } = item;
-    if (!totals[total_tipo_venta]) {
-      totals[total_tipo_venta] = {
-        total_tipo_venta,
-        utilidad_total: utilidad,
-        monto_facturacion_total: monto_facturacion
-      };
-    } else {
-      totals[total_tipo_venta].utilidad_total += utilidad;
-      totals[total_tipo_venta].monto_facturacion_total += monto_facturacion;
+    if (total_tipo_venta !== '– TOTAL DEL MES – ') {
+      if (!totals[total_tipo_venta]) {
+        totals[total_tipo_venta] = {
+          total_tipo_venta,
+          utilidad_total: utilidad,
+          monto_facturacion_total: monto_facturacion
+        };
+      } else {
+        totals[total_tipo_venta].utilidad_total += utilidad;
+        totals[total_tipo_venta].monto_facturacion_total += monto_facturacion;
+      }
     }
     return totals;
   }, {});
@@ -217,6 +219,7 @@ const Analitics = () => {
                             left: 30,
                           }}
                         >
+                          {console.log(chartData)}
                           <CartesianGrid stroke="#50b3e5" />
                           <XAxis dataKey="total_tipo_venta" stroke="#50b3e5" />
                           <YAxis domain={[0, 200000]} scale={'sqrt'} tickCount={15} tickFormatter={(value) => `$${value.toLocaleString()}`} />

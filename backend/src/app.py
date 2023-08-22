@@ -261,13 +261,16 @@ def get_total_facturacion(data):
                 valid_data.append({**row, "year": year, "month": int(row["month"])})
             except ValueError:
                 pass  # Skip rows with non-numeric or empty "year" values
+    
+    # Filter out rows with empty or null "producto" field
+    filtered_data = [row for row in valid_data if row.get("producto") is not None and row.get("producto").strip() != ""]
 
-    if not valid_data:
+    if not filtered_data:
         return {"error": "No valid year values"}
 
     # Extract the required fields from each row and filter for the highest year and upload
-    max_year = max(valid_data, key=lambda row: row["year"])["year"]
-    latest_upload_rows = [row for row in valid_data if row["year"] == max_year]
+    max_year = max(filtered_data, key=lambda row: row["year"])["year"]
+    latest_upload_rows = [row for row in filtered_data if row["year"] == max_year]
 
     return latest_upload_rows
 
