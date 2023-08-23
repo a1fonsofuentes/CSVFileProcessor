@@ -47,6 +47,8 @@ highest_id_response = supabase.from_('data').select('upload').eq('year', '2.023'
 highest_id = highest_id_response.data[0]['upload']
 highest_id_response22 = supabase.from_('data').select('upload').eq('year', '2.022').order('upload', desc=True).limit(1).execute()
 highest_id22 = highest_id_response22.data[0]['upload']
+highest_id_response23 = supabase.from_('data').select('upload').eq('year', '2.023').order('upload', desc=True).limit(1).execute()
+highest_id23 = highest_id_response.data[0]['upload']
 
 security = HTTPBasic()
 
@@ -324,12 +326,13 @@ def supabase_queries():
 @app.get("/get_anual_sales_line_graph_image")
 async def get_anual_sales_line_graph_image():
     image_path = anual_sales_line_graph()
-    
-    # Check if the image file exists
+
     if os.path.exists(image_path):
-        return FileResponse(image_path, media_type="image/png")
+        response = FileResponse(image_path, media_type="image/png")
+        response.headers["Cache-Control"] = "no-cache"  # Disable caching
+        return response
     else:
-        return JSONResponse(content={"error": "Image not found"}, status_code=404)
+        raise HTTPException(status_code=404, detail="Image not found")
 
 def anual_sales_line_graph():
 
@@ -395,7 +398,7 @@ def linear_regression():
     response1 = supabase.from_('data').select('monto_facturacion').eq('upload', highest_id22).eq('total_tipo_venta', '– TOTAL DEL MES – ').limit(1000).execute() 
     data = response1.data
 
-    response2 = supabase.from_('data').select('monto_facturacion').eq('upload', highest_id).eq('total_tipo_venta', '– TOTAL DEL MES – ').limit(1000).execute()
+    response2 = supabase.from_('data').select('monto_facturacion').eq('upload', highest_id23).eq('total_tipo_venta', '– TOTAL DEL MES – ').limit(1000).execute()
     data2 = response2.data
     df = pd.DataFrame(data)
     df2 = pd.DataFrame(data2)

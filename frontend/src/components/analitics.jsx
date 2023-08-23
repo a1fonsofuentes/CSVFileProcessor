@@ -46,6 +46,7 @@ const Analitics = () => {
   const [selectedYear, setSelectedYear] = useState('');
   const [availableYears, setAvailableYears] = useState([]);
   const [selectedMonth, setSelectedMonth] = useState('1');
+  const [imageKey, setImageKey] = useState(0);
   const fetchGraphs = async () => {
     const fetchData = async () => {
       try {
@@ -67,20 +68,19 @@ const Analitics = () => {
       try {
         const response = await axios.get('http://localhost:8000/get_clientes');
         setClientes(response.data.clientes);
-        console.log(response.data.clientes)
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     };
-
     const fetchAvailableYears = async () => {
       try {
         const response = await axios.get('http://localhost:8000/get_available_years');
-        setAvailableYears(response.data.availableYears);
+        setAvailableYears(response.data.availableYears.filter((year) => year !== '' && year !== null));
       } catch (error) {
         console.error('Error fetching available years:', error);
       }
     };
+    setImageKey(prevKey => prevKey + 1);
     fetchOportunidad();
     fetchClientes();
     fetchData();
@@ -121,7 +121,7 @@ const Analitics = () => {
     const additionalTicks = [2500, 5000, 20000, 50000, 100000, 500000, 1000000]; // Custom tick values
     const maxTickCount = 12; // You can adjust this as needed
     let tickInterval = Math.ceil(dataMax / maxTickCount);
-  
+
     // Round tickInterval to the next thousand or million
     const magnitude = Math.pow(10, Math.floor(Math.log10(tickInterval)));
     if (tickInterval > 5 * magnitude) {
@@ -131,17 +131,17 @@ const Analitics = () => {
     } else if (tickInterval > magnitude) {
       tickInterval = 2 * magnitude;
     }
-  
+
     const ticks = [];
-  
+
     // Add the custom additional ticks
     ticks.push(...additionalTicks.filter((tick) => tick <= dataMax));
-  
+
     // Generate dynamic ticks
     for (let i = tickInterval; i <= dataMax; i += tickInterval) {
       ticks.push(i);
     }
-  
+
     return ticks;
   };
 
@@ -183,7 +183,8 @@ const Analitics = () => {
                   </Card.Title>
                   <Card.Text>
                     <img
-                      src={`http://localhost:8000/get_anual_sales_line_graph_image`}
+                      key={imageKey}
+                      src={`http://localhost:8000/get_anual_sales_line_graph_image?timestamp=${imageKey}`}
                       alt="Anual Sales Graph"
                       style={{ width: '90%' }}
                     />
@@ -282,7 +283,6 @@ const Analitics = () => {
                             left: 30,
                           }}
                         >
-                          {console.log(oportunidad)}
                           <CartesianGrid stroke="#50b3e5" />
                           <XAxis dataKey="producto" stroke="#50b3e5" />
                           <YAxis ticks={calculateTicks(Math.max(...oportunidad.map(entry => entry.monto_facturacion)))} scale={'sqrt'} tickCount={15} tickFormatter={(value) => `$${value.toLocaleString()}`} />
@@ -405,7 +405,7 @@ const Analitics = () => {
                                   </text>
                                 );
                               } else {
-                                return null; 
+                                return null;
                               }
                             }}
                           >

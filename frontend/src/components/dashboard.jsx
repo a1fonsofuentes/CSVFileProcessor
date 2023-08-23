@@ -60,7 +60,6 @@ const Dashboard = () => {
                     transition: Bounce
                 });
             } else {
-                console.log(controllerResponse)
                 const controllerId = controllerResponse.data[0].id;
                 for (let rowIndex = 1; rowIndex < processedArray.length; rowIndex++) {
                     const row = processedArray[rowIndex]; // Use row directly
@@ -95,7 +94,6 @@ const Dashboard = () => {
                             transition: Bounce
                         });
                     } else {
-                        console.log('Row inserted:', data);
                         toast.update('toast', {
                             render: 'success',
                             type: toast.TYPE.SUCCESS,

@@ -18,7 +18,6 @@ const Historico = () => {
                         uploadDate: upload.uploadDate,
                         data: upload.data
                     }));
-                    console.log(uploads)
                     setUploadData(uploads);
                     setYears(uploads.map(upload => upload.data[0]?.year));
                     setLoading(true);
@@ -78,7 +77,6 @@ const Historico = () => {
                                                 </thead>
                                                 <tbody>
                                                     {upload.data.map((row, rowIndex) => {
-                                                        console.log("Current row:", row)
                                                         return (<tr key={rowIndex}>
                                                             <td>{row.month}</td>
                                                             <td>{row.total_tipo_venta}</td>
