@@ -43,8 +43,10 @@ SECRET_KEY = "your_secret_key"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
-highest_id_response = supabase.from_('data').select('upload').eq('year', '2023').order('upload', desc=True).limit(1).execute()
+highest_id_response = supabase.from_('data').select('upload').eq('year', '2.023').order('upload', desc=True).limit(1).execute()
 highest_id = highest_id_response.data[0]['upload']
+highest_id_response22 = supabase.from_('data').select('upload').eq('year', '2.022').order('upload', desc=True).limit(1).execute()
+highest_id22 = highest_id_response22.data[0]['upload']
 
 security = HTTPBasic()
 
@@ -54,6 +56,14 @@ origins = ["http://localhost:5173"]  # front-end server
 app.add_middleware(CORSMiddleware, allow_origins=origins, allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
 
 router = APIRouter()
+
+@app.post("/update_highest_id")
+async def update_highest_id(selected_year: str):
+    print(f"Received selected_year: {selected_year}")
+    global highest_id, highest_id_response
+    highest_id_response = supabase.from_('data').select('upload').eq('year', selected_year).order('upload', desc=True).limit(1).execute()
+    highest_id = highest_id_response.data[0]['upload']
+    return {"message": "highest_id updated successfully"}
 
 @app.post("/login")
 def login(credentials: HTTPBasicCredentials = Depends(security)):
@@ -322,8 +332,6 @@ async def get_anual_sales_line_graph_image():
         return JSONResponse(content={"error": "Image not found"}, status_code=404)
 
 def anual_sales_line_graph():
-    highest_id_response = supabase.from_('data').select('upload').order('upload', desc=True).limit(1).execute()
-    highest_id = highest_id_response.data[0]['upload']
 
     response = supabase.from_('data').select('monto_facturacion').eq('upload', highest_id).eq('total_tipo_venta', '– TOTAL DEL MES – ').limit(1000).execute() #TO USE IT HERE BC WE GOT 24 ENTRIES RN 
     data = response.data
@@ -363,14 +371,16 @@ def anual_sales_line_graph():
     plt.savefig(image_path)
     return image_path
     
-# @app.get("/get_available_years")
-# async def get_available_years():
-#     try:
-#         response = supabase.from_("data").select("distinct year").execute()
-#         available_years = [row["year"] for row in response.data]
-#         return {"availableYears": available_years}
-#     except Exception as e:
-#         return JSONResponse(content={"error": str(e)}, status_code=500)
+@app.get("/get_available_years")
+async def get_available_years():
+    try:
+        response = supabase.from_("data").select("year").execute()
+        available_years = [row["year"] for row in response.data]
+        unique_years_set = set(available_years)
+        unique_years_list = list(unique_years_set)
+        return {"availableYears": unique_years_list}
+    except Exception as e:
+        return JSONResponse(content={"error": str(e)}, status_code=500)
 
 @app.get("/get_lineal_regresion_image")
 async def get_lineal_regresion_image():
@@ -382,10 +392,10 @@ async def get_lineal_regresion_image():
         return JSONResponse(content={"error": "Image not found"}, status_code=404)
 
 def linear_regression():
-    response1 = supabase.from_('data').select('monto_facturacion').eq('upload', highest_id).eq('total_tipo_venta', '– TOTAL DEL MES – ').limit(1000).execute() 
+    response1 = supabase.from_('data').select('monto_facturacion').eq('upload', highest_id22).eq('total_tipo_venta', '– TOTAL DEL MES – ').limit(1000).execute() 
     data = response1.data
 
-    response2 = supabase.from_('data').select('monto_facturacion').eq('upload', 35).eq('total_tipo_venta', '– TOTAL DEL MES – ').limit(1000).execute()
+    response2 = supabase.from_('data').select('monto_facturacion').eq('upload', highest_id).eq('total_tipo_venta', '– TOTAL DEL MES – ').limit(1000).execute()
     data2 = response2.data
     df = pd.DataFrame(data)
     df2 = pd.DataFrame(data2)
@@ -445,8 +455,6 @@ async def get_producto_oportunidad():
     return {"producto_oportunidad": producto_oportunidad_data}
 
 def producto_oportunidad_query():
-    highest_id_response = supabase.from_('data').select('upload').order('upload', desc=True).limit(1).execute()
-    highest_id = highest_id_response.data[0]['upload']
 
     dataframes = []
     final_list = []
@@ -475,8 +483,6 @@ async def get_clientes():
     return {"clientes": clientes_data}
 
 def clientes():
-    highest_id_response = supabase.from_('data').select('upload').order('upload', desc=True).limit(1).execute()
-    highest_id = highest_id_response.data[0]['upload']
     clientes = ['Grupo Codaca', 'Industrias Alimenticias Kern´s', 'Kellogg de Guatemala', 'Registro Nacional de las Personas', 'GT - Banco Agromercantil de Guatemala  - BAM -', 'GT - Banco Industrial', 'HN - Banco del Pais', 'Sertracen Ecuador', 'Transunión Guatemala S.A.', 'COFIÑO STAHL', 'Instituto de Fomento de Hipotecas Aseguradas - FHA -', 'SV One Solution', 'GT - Banco Crédito Hipotecario Nacional', 'GT - Grupo Terra', 'Comdata Guatemala SA', '4 Carriles S.A.', 'Infile S.A.', 'GT - ViviBanco Guatemala', 'SOPESA', 'GSI Dominicana', 'Sertracen Panamá', 'Instituto Salvadoreño del Seguro Social', 'Spectrum S.A.','SV - Sertracen', 'SV - Banco Industrial','Instituto Guatemalteco de Migración', 'Superintendencia de Bancos','Superintendencia de Administración Tributaria', 'CitiBank Guatemala NA','Edgar Elias', 'Instituto Nacional de Electrificación INDE', 'Registro Mercantil General de la República de Guatemala', 'vLEX LLC', 'Municipalidad de Guatemala', 'Nery Aldana', 'GT - AmigoPAQ', 'GT - Luma Holdings (NEXA)', 'COE GSI', 'Thales', 'Ingrup', 'SV Banco Cuscatlán El Salvador', 'SV - Banco Agricola', 'GIGA S.A. de C.V.', 'GT - Banco Ficohsa Guatemala S.A.', 'Ministerio de Defensa', 'Gestionadora de Creditos', 'GT - Banco INV', 'GT - Interconsumo S.A.', 'Documentos Inteligentes SV', 'Confederación Deportiva Autónoma de Guatemala', 'Ministerio de Cultura y Deportes', 'Corporación Multi Inversiones', 'Organismo Judicial', 'Administrador del Mercado Mayorista AMM', 'Fomilenio', 'SV Banco Azul de El Salvador', 'GT Banco Promérica', 'Osmo Wallet', 'Banco de los Trabajadores']
     final_list = []
     for cliente in clientes:

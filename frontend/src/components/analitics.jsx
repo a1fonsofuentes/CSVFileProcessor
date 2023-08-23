@@ -46,8 +46,7 @@ const Analitics = () => {
   const [selectedYear, setSelectedYear] = useState('');
   const [availableYears, setAvailableYears] = useState([]);
   const [selectedMonth, setSelectedMonth] = useState('1');
-  useEffect(() => {
-    // Define an async function to fetch data
+  const fetchGraphs = async () => {
     const fetchData = async () => {
       try {
         const response = await axios.get('http://localhost:8000/get_total_facturacion');
@@ -74,20 +73,22 @@ const Analitics = () => {
       }
     };
 
-    // const fetchAvailableYears = async () => {
-    //   try {
-    //     const response = await axios.get('http://localhost:8000/get_available_years'); will be implimented later on xdxd
-    //     setAvailableYears(response.data.availableYears);
-    //   } catch (error) {
-    //     console.error('Error fetching available years:', error);
-    //   }
-    // };
+    const fetchAvailableYears = async () => {
+      try {
+        const response = await axios.get('http://localhost:8000/get_available_years');
+        setAvailableYears(response.data.availableYears);
+      } catch (error) {
+        console.error('Error fetching available years:', error);
+      }
+    };
     fetchOportunidad();
     fetchClientes();
     fetchData();
-    // fetchAvailableYears();
-
-  }, []);
+    fetchAvailableYears();
+  }
+  useEffect(() => {
+    fetchGraphs()
+  }, [selectedYear]);
 
   const filterDataByMonthAndTipoVenta = (selectedMonth) => {
     const filteredData = data.filter((entry) => entry.month === parseInt(selectedMonth) && entry.total_tipo_venta !== '– TOTAL DEL MES – ');
@@ -170,7 +171,8 @@ const Analitics = () => {
             Analitics
           </Card.Title>
           <Card.Subtitle>
-            {/* <YearSelector selectedYear={selectedYear} onSelectYear={setSelectedYear} availableYears={availableYears} /> */}
+            <YearSelector selectedYear={selectedYear} onSelectYear={setSelectedYear} availableYears={availableYears} />
+            <br />
           </Card.Subtitle>
           <Card.Text>
             {data.length > 0 ? (
@@ -326,8 +328,7 @@ const Analitics = () => {
 
                               const percent = ((value / oportunidad.reduce((sum, entry) => sum + entry.monto_facturacion, 0)) * 100).toFixed(2);
 
-                              // Conditionally render the label if percentage is greater than 3%
-                              if (parseFloat(percent) >= 3) {
+                              if (parseFloat(percent) >= 1) {
                                 return (
                                   <text
                                     x={x}
@@ -340,7 +341,7 @@ const Analitics = () => {
                                   </text>
                                 );
                               } else {
-                                return null; // Return null to skip rendering the label
+                                return null;
                               }
                             }}
                           >
@@ -360,7 +361,7 @@ const Analitics = () => {
                 <br />
                 <Card style={{ backgroundColor: "#ffffff", color: "#333", fontSize: 15, textAlign: "center", padding: "20px", borderRadius: '10px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)', }}>
                   <Card.Title>
-                    <h4>Grafica Anual - PIE - Clientes</h4>
+                    <h4>Grafica Regresion Lineal</h4>
                   </Card.Title>
                   <Card.Text>
                     <div style={{ width: '100%', height: 600 }}>
@@ -391,8 +392,7 @@ const Analitics = () => {
 
                               const percent = ((value / clientes.reduce((sum, entry) => sum + entry.monto_facturacion, 0)) * 100).toFixed(2);
 
-                              // Conditionally render the label if percentage is greater than 3%
-                              if (parseFloat(percent) >= 3) {
+                              if (parseFloat(percent) >= 1.5) {
                                 return (
                                   <text
                                     x={x}
@@ -405,7 +405,7 @@ const Analitics = () => {
                                   </text>
                                 );
                               } else {
-                                return null; // Return null to skip rendering the label
+                                return null; 
                               }
                             }}
                           >
