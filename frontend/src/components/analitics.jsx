@@ -117,7 +117,7 @@ const Analitics = () => {
 
 
   const calculateTicks = (dataMax) => {
-    const additionalTicks = [5000, 20000, 50000, 100000, 500000, 1000000]; // Custom tick values
+    const additionalTicks = [2500, 5000, 20000, 50000, 100000, 500000, 1000000]; // Custom tick values
     const maxTickCount = 12; // You can adjust this as needed
     let tickInterval = Math.ceil(dataMax / maxTickCount);
   

@@ -43,6 +43,9 @@ SECRET_KEY = "your_secret_key"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
+highest_id_response = supabase.from_('data').select('upload').eq('year', '2023').order('upload', desc=True).limit(1).execute()
+highest_id = highest_id_response.data[0]['upload']
+
 security = HTTPBasic()
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -279,7 +282,7 @@ def get_total_facturacion(data):
 def process_supabase_data():
     try:
         # Fetch data from Supabase
-        response = supabase.from_("data").select("*").execute()
+        response = supabase.from_("data").select("*").eq('upload', highest_id).execute()
         data = response.data
         # Check if there is any data
         if data:
@@ -379,8 +382,6 @@ async def get_lineal_regresion_image():
         return JSONResponse(content={"error": "Image not found"}, status_code=404)
 
 def linear_regression():
-    highest_id_response = supabase.from_('data').select('upload').order('upload', desc=True).limit(1).execute()
-    highest_id = highest_id_response.data[0]['upload']
     response1 = supabase.from_('data').select('monto_facturacion').eq('upload', highest_id).eq('total_tipo_venta', '– TOTAL DEL MES – ').limit(1000).execute() 
     data = response1.data
 
