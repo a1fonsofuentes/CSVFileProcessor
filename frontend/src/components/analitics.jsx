@@ -37,7 +37,7 @@ const monthNames = {
   12: 'Diciembre'
 };
 
-const colors = ['#818282', '#50E5CD', '#50b3e5', '#FFCF44', '#387DA0', '#84C9EC', '#61BAE7', '#ffc416', '#E5CD50'];
+const colors = ['#818282', '#5069E5', '#50b3e5', '#FFCF44', '#387DA0', '#FFD55B', '#61BAE7', '#ffc416', '#E5CD50'];
 
 const Analitics = () => {
   const [data, setData] = useState([]);

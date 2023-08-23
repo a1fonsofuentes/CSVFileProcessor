@@ -348,7 +348,7 @@ def anual_sales_line_graph():
     months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Sept.', 'Octubre', 'Nov.', 'Dic.']
 
     plt.figure(figsize=(10, 6))  
-    plt.plot(months, monthly_totals, marker='o', color='#50E5CD')
+    plt.plot(months, monthly_totals, marker='o', color='#50B3E5')
     plt.title('Progresión de ventas' , color='#50b3e5')
     plt.xlabel('Mes', color='#50b3e5')
     plt.ylabel('Ventas totales', color='#50b3e5')
@@ -424,7 +424,7 @@ def linear_regression():
     plt.scatter(combined_months[:12], year1_sales, color='#50b3e5', label='Ventas en 2022', s=80)
     
     
-    plt.plot(combined_months, y_pred, label='Combined Regression Line', color='#50E5CD', linewidth=1.5)
+    plt.plot(combined_months, y_pred, label='Combined Regression Line', color='#818282', linewidth=1.5)
 
     total_sales = 0
     for i, txt in enumerate(y_pred):
