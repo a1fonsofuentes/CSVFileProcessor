@@ -361,7 +361,7 @@ const Analitics = () => {
                 <br />
                 <Card style={{ backgroundColor: "#ffffff", color: "#333", fontSize: 15, textAlign: "center", padding: "20px", borderRadius: '10px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)', }}>
                   <Card.Title>
-                    <h4>Grafica Regresion Lineal</h4>
+                    <h4>Grafica Anual - PIE - Clientes</h4>
                   </Card.Title>
                   <Card.Text>
                     <div style={{ width: '100%', height: 600 }}>
@@ -431,7 +431,7 @@ const Analitics = () => {
             <br />
             <Card style={{ backgroundColor: "#ffffff", color: "#333", fontSize: 15, textAlign: "center", padding: "20px", borderRadius: '10px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)', }}>
               <Card.Title>
-                <h4>Grafica anual - Ventas</h4>
+                <h4>Grafica Regresion Lineal - Ventas</h4>
               </Card.Title>
               <Card.Text>
                 <img
