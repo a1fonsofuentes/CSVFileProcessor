@@ -43,7 +43,7 @@ const Analitics = () => {
   const [data, setData] = useState([]);
   const [oportunidad, setOportunidad] = useState([]);
   const [clientes, setClientes] = useState([]);
-  const [selectedYear, setSelectedYear] = useState('');
+  const [selectedYear, setSelectedYear] = useState();
   const [availableYears, setAvailableYears] = useState([]);
   const [selectedMonth, setSelectedMonth] = useState('1');
   const [imageKey, setImageKey] = useState(0);

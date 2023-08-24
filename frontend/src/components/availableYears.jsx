@@ -20,7 +20,8 @@ const YearSelector = ({ selectedYear, onSelectYear, availableYears }) => {
           <Form.Group controlId="yearSelect">
             <Form.Label>Select Year:</Form.Label>
             <Form.Control as="select" value={selectedYear} onChange={handleYearChange}>
-              <option value="">Select a year</option>
+              <option disabled selected>Select a year</option>
+              <option key='last' value="">Ultimo subido</option>
               {availableYears.map((year) => (
                 <option key={year} value={year}>
                   {year}
