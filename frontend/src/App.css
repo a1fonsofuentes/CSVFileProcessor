@@ -2,3 +2,9 @@
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
+
+.App {
+    background-image: url('frontend/src/imgs/background.jpg'); /* Replace with your image path */
+    background-size: cover; /* Adjust the sizing of the background image */
+    background-repeat: no-repeat;
+  }

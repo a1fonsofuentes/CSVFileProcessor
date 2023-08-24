@@ -377,6 +377,7 @@ def anual_sales_line_graph():
 @app.get("/get_available_years")
 async def get_available_years():
     try:
+        global highest_id, highest_id_response
         response = supabase.from_("data").select("year").execute()
         available_years = [row["year"] for row in response.data]
         unique_years_set = set(available_years)

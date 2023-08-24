@@ -6,6 +6,7 @@ import Spinner from 'react-bootstrap/Spinner';
 import Historico from './historico';
 import Analitics from './analitics';
 import supabase from './db';
+import background from '../imgs/background.jpg'
 
 
 const Dashboard = () => {
@@ -142,7 +143,7 @@ const Dashboard = () => {
     };
 
     return (
-        <div style={{ backgroundColor: "#50b3e5", minHeight: "100vh", padding: "20px" }}>
+        <div style={{ backgroundImage: `url(${background})`,backgroundSize: '100%', backgroundRepeat: 'repeat-y', minHeight: "100vh", padding: "20px" }}>
             <Container>
                 <Row className="justify-content-md-center">
                     <Col>
@@ -195,13 +196,13 @@ const Dashboard = () => {
                     <Col>
                         <Nav variant="tabs" defaultActiveKey={'file'} onSelect={handleTabSelect}>
                             <Nav.Item>
-                                <Nav.Link eventKey={'file'} style={{ color: ((nav == 'default') ? '#387DA0' : '#5A5B5B'), }}>Visualizar Archivo Procesado</Nav.Link>
+                                <Nav.Link eventKey={'file'} style={{ color: ((nav == 'default') ? '#387DA0' : '#ffc416'), }}>Visualizar Archivo Procesado</Nav.Link>
                             </Nav.Item>
                             <Nav.Item>
-                                <Nav.Link eventKey={'linkHistorico'} style={{ color: ((nav == 'historico') ? '#387DA0' : '#5A5B5B'), }}>Historico</Nav.Link>
+                                <Nav.Link eventKey={'linkHistorico'} style={{ color: ((nav == 'historico') ? '#387DA0' : '#ffc416'), }}>Historico</Nav.Link>
                             </Nav.Item>
                             <Nav.Item>
-                                <Nav.Link eventKey={'linkAnalitics'} style={{ color: ((nav == 'anal') ? '#387DA0' : '#5A5B5B'), }}>Analytics</Nav.Link>
+                                <Nav.Link eventKey={'linkAnalitics'} style={{ color: ((nav == 'anal') ? '#387DA0' : '#ffc416'), }}>Analytics</Nav.Link>
                             </Nav.Item>
                         </Nav>
                     </Col>
