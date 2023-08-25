@@ -16,7 +16,8 @@ import {
   Pie,
   Cell,
   Label,
-  LabelList
+  LabelList,
+  LineChart
 } from 'recharts';
 import axios from 'axios';
 import YearSelector from './availableYears';
@@ -144,6 +145,29 @@ const Analitics = () => {
 
     return ticks;
   };
+
+  // const MultiLineChart = () => {
+  //   const transformedData = transformDataForMultiline();
+  
+  //   return (
+  //     <LineChart width={800} height={400} data={transformedData}>
+  //       <CartesianGrid strokeDasharray="3 3" />
+  //       <XAxis data={transformedData[0].data} dataKey="month" domain={[0,12]}/>
+  //       <YAxis scale={'sqrt'} ticks={calculateTicks(Math.max(...transformedData.map(entry => entry.data.monto_facturacion)))} tickCount={15} tickFormatter={(value) => `$${value.toLocaleString()}`}/>
+  //       <Tooltip />
+  //       {console.log(transformedData[0])}
+  //       {transformedData.map(entry => (
+  //         <Line
+  //           key={entry.cuenta}
+  //           dataKey="monto_facturacion"
+  //           data={entry.data}
+  //           name={entry.cuenta}
+  //           stroke={`#${Math.floor(Math.random()*16777215).toString(16)}`} // Generate a random color for each line
+  //         />
+  //       ))}
+  //     </LineChart>
+  //   );
+  // };  
 
   const tipoVentaTotals = data.reduce((totals, item) => {
     const { total_tipo_venta, utilidad, monto_facturacion } = item;
@@ -296,6 +320,18 @@ const Analitics = () => {
                 </Card>
                 <br />
                 <br />
+                {/* <Card style={{ backgroundColor: "#ffffff", color: "#333", fontSize: 15, textAlign: "center", padding: "20px", borderRadius: '10px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)', }}>
+                  <Card.Title>
+                    <h4>Grafica Anual - Producto Oportunidad</h4>
+                  </Card.Title>
+                  <Card.Text>
+                    <div style={{ width: '100%', height: 600 }}>
+                      {MultiLineChart()}
+                    </div>
+                  </Card.Text>
+                </Card>
+                <br />
+                <br /> */}
                 <Card style={{ backgroundColor: "#ffffff", color: "#333", fontSize: 15, textAlign: "center", padding: "20px", borderRadius: '10px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)', }}>
                   <Card.Title>
                     <h4>Grafica Anual - PIE - Producto Oportunidad</h4>
