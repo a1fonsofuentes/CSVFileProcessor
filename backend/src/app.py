@@ -509,3 +509,19 @@ if __name__ == "__main__":
 
     uvicorn.run(app, host="0.0.0.0", port=8000)
 
+def producto_oportunidad1():
+    productos = ['DIGITALIZACION', 'GEMALTO PVC', 'CAMI APP', 'ONBASE', 'E-POWER', 'OTROS', 'FUJITSU', 'GEMALTO', 'BIZAGI']
+    result = []
+
+    for month in range(1, 13):
+        for producto in productos:
+            response = supabase.from_('data').select('monto_facturacion').eq('upload', highest_id).eq('producto', producto).eq('month', month).limit(1000).execute()
+            data = response.data
+            if data != []:
+                result.append({
+                    'month': month,
+                    'producto': producto,
+                    'monto_facturacion': sum((pd.DataFrame(data))['monto_facturacion'].tolist()),
+                })
+    
+    return result
