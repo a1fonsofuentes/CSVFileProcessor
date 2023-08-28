@@ -3,9 +3,9 @@ import { Form } from 'react-bootstrap';
 
 const MonthSelector = ({ selectedMonth, onSelectMonth }) => {
   const monthNames = {
-    1: 'January',
-    2: 'February',
-    3: 'March',
+    1: 'Enero',
+    2: 'Febro',
+    3: 'Marzo',
     4: 'Abril',
     5: 'Mayo',
     6: 'Junio',
