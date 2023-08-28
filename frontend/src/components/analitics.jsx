@@ -146,28 +146,24 @@ const Analitics = () => {
     return ticks;
   };
 
-  // const MultiLineChart = () => {
-  //   const transformedData = transformDataForMultiline();
-
-  //   return (
-  //     <LineChart width={800} height={400} data={transformedData}>
-  //       <CartesianGrid strokeDasharray="3 3" />
-  //       <XAxis data={transformedData[0].data} dataKey="month" domain={[0,12]}/>
-  //       <YAxis scale={'sqrt'} ticks={calculateTicks(Math.max(...transformedData.map(entry => entry.data.monto_facturacion)))} tickCount={15} tickFormatter={(value) => `$${value.toLocaleString()}`}/>
-  //       <Tooltip />
-  //       {console.log(transformedData[0])}
-  //       {transformedData.map(entry => (
-  //         <Line
-  //           key={entry.cuenta}
-  //           dataKey="monto_facturacion"
-  //           data={entry.data}
-  //           name={entry.cuenta}
-  //           stroke={`#${Math.floor(Math.random()*16777215).toString(16)}`} // Generate a random color for each line
-  //         />
-  //       ))}
-  //     </LineChart>
-  //   );
-  // };  
+  const MultiLineChart = ({ dataMulti }) => {
+    return (
+      <LineChart width={800} height={400} data={dataMulti}>
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="month" domain={[1, 12]} />
+        <YAxis scale={'sqrt'} ticks={calculateTicks(Math.max(...dataMulti.map(entry => entry.data.monto_facturacion)))} tickCount={15} tickFormatter={(value) => `$${value.toLocaleString()}`} />
+        <Tooltip />
+        {dataMulti.map(entry => (
+          <Line
+            key={entry.cuenta}
+            dataKey={entry.cuenta}
+            name={entry.cuenta}
+            stroke={`#${Math.floor(Math.random() * 16777215).toString(16)}`}
+          />
+        ))}
+      </LineChart>
+    );
+  };
 
   const tipoVentaTotals = data.reduce((totals, item) => {
     const { total_tipo_venta, utilidad, monto_facturacion } = item;
