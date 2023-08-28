@@ -48,6 +48,7 @@ const Analitics = () => {
   const [availableYears, setAvailableYears] = useState([]);
   const [selectedMonth, setSelectedMonth] = useState('1');
   const [imageKey, setImageKey] = useState(0);
+  const [oportunidad1, setOportunidad1] = useState([])
   const fetchGraphs = async () => {
     const fetchData = async () => {
       try {
@@ -61,6 +62,15 @@ const Analitics = () => {
       try {
         const response = await axios.get('http://localhost:8000/get_producto_oportunidad');
         setOportunidad(response.data.producto_oportunidad);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+    const fetchOportunidad1 = async () => {
+      try {
+        const response = await axios.get('http://localhost:8000/get_oportunidad_anual');
+        setOportunidad1(response.data);
+        console.log(oportunidad1)
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -86,6 +96,7 @@ const Analitics = () => {
     fetchClientes();
     fetchData();
     fetchAvailableYears();
+    fetchOportunidad1();
   }
   useEffect(() => {
     fetchGraphs()
@@ -146,22 +157,27 @@ const Analitics = () => {
     return ticks;
   };
 
-  const MultiLineChart = ({ dataMulti }) => {
+  const MultiLineChart = ({ data }) => {
+    const products = ['DIGITALIZACION', 'GEMALTO PVC', 'CAMI APP', 'ONBASE', 'E-POWER', 'OTROS', 'FUJITSU', 'GEMALTO', 'BIZAGI'];
     return (
-      <LineChart width={800} height={400} data={dataMulti}>
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="month" domain={[1, 12]} />
-        <YAxis scale={'sqrt'} ticks={calculateTicks(Math.max(...dataMulti.map(entry => entry.data.monto_facturacion)))} tickCount={15} tickFormatter={(value) => `$${value.toLocaleString()}`} />
-        <Tooltip />
-        {dataMulti.map(entry => (
-          <Line
-            key={entry.cuenta}
-            dataKey={entry.cuenta}
-            name={entry.cuenta}
-            stroke={`#${Math.floor(Math.random() * 16777215).toString(16)}`}
-          />
-        ))}
-      </LineChart>
+      <ResponsiveContainer width="100%" height={600}>
+        <LineChart margin={{top: 20, right: 20, bottom: 20, left: 40,}} data={data}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="month" domain={[1, 12]} />
+          <YAxis scale={'sqrt'} ticks={calculateTicks(Math.max(...data.map(entry => entry['GEMALTO PVC'])))} tickFormatter={(value) => `$${value.toLocaleString()}`} />
+          <Tooltip />
+        <Legend />
+          {products.map(product => (
+            <Line
+              key={product}
+              type="monotone"
+              dataKey={product}
+              name={product}
+              stroke={`#${Math.floor(Math.random() * 16777215).toString(16)}`}
+            />
+          ))}
+        </LineChart>
+      </ResponsiveContainer>
     );
   };
 
@@ -316,18 +332,18 @@ const Analitics = () => {
                 </Card>
                 <br />
                 <br />
-                {/* <Card style={{ backgroundColor: "#ffffff", color: "#333", fontSize: 15, textAlign: "center", padding: "20px", borderRadius: '10px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)', }}>
+                <Card style={{ backgroundColor: "#ffffff", color: "#333", fontSize: 15, textAlign: "center", padding: "20px", borderRadius: '10px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)', }}>
                   <Card.Title>
                     <h4>Grafica Anual - Producto Oportunidad</h4>
                   </Card.Title>
                   <Card.Text>
                     <div style={{ width: '100%', height: 600 }}>
-                      {MultiLineChart()}
+                      {MultiLineChart(oportunidad1)}
                     </div>
                   </Card.Text>
                 </Card>
                 <br />
-                <br /> */}
+                <br />
                 <Card style={{ backgroundColor: "#ffffff", color: "#333", fontSize: 15, textAlign: "center", padding: "20px", borderRadius: '10px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)', }}>
                   <Card.Title>
                     <h4>Gráfica Anual - PIE - Producto Oportunidad</h4>

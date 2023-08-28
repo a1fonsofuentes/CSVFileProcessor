@@ -504,24 +504,37 @@ def clientes():
 
     return final_list
 
-if __name__ == "__main__":
-    import uvicorn
-
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+@app.get("/get_oportunidad_anual")
+async def get_oportunidad_anual():
+    print('hello')
+    try:
+        oportunidad_data = producto_oportunidad1()
+        return {"data": oportunidad_data}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="An error occurred.")
 
 def producto_oportunidad1():
     productos = ['DIGITALIZACION', 'GEMALTO PVC', 'CAMI APP', 'ONBASE', 'E-POWER', 'OTROS', 'FUJITSU', 'GEMALTO', 'BIZAGI']
     result = []
 
     for month in range(1, 13):
+        month_data = {
+            'month': month,
+        }
+        
         for producto in productos:
             response = supabase.from_('data').select('monto_facturacion').eq('upload', highest_id).eq('producto', producto).eq('month', month).limit(1000).execute()
             data = response.data
-            if data != []:
-                result.append({
-                    'month': month,
-                    'producto': producto,
-                    'monto_facturacion': sum((pd.DataFrame(data))['monto_facturacion'].tolist()),
-                })
+            if data:
+                month_data[producto] = sum((pd.DataFrame(data))['monto_facturacion'].tolist())
+            else:
+                month_data[producto] = 0
+        
+        result.append(month_data)
     
     return result
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run(app, host="0.0.0.0", port=8000)
