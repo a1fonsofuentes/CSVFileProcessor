@@ -323,27 +323,29 @@ def supabase_queries():
     data = supabase.table('data').select('*').execute()
     print(data)
 
-@app.get("/get_anual_sales_line_graph_image")
-async def get_anual_sales_line_graph_image():
-    image_path = anual_sales_line_graph()
-
-    if os.path.exists(image_path):
-        response = FileResponse(image_path, media_type="image/png")
-        response.headers["Cache-Control"] = "no-cache"  # Disable caching
-        return response
+@app.get("/get_anual_sales_line_graph")
+async def get_anual_sales_line_graph():
+    data = anual_sales_line_graph()
+    if len(data) > 0:
+        return JSONResponse(content=data, status_code=200)
     else:
-        raise HTTPException(status_code=404, detail="Image not found")
+        raise HTTPException(status_code=404, detail="Data not found")
 
 def anual_sales_line_graph():
-
-    response = supabase.from_('data').select('monto_facturacion').eq('upload', highest_id).eq('total_tipo_venta', '– TOTAL DEL MES – ').limit(1000).execute() #TO USE IT HERE BC WE GOT 24 ENTRIES RN 
+    response = supabase.from_('data').select('month', 'producto', 'monto_facturacion').eq('upload', highest_id).eq('total_tipo_venta', '– TOTAL DEL MES – ').limit(1000).execute()
     data = response.data
     
-    # response = supabase.table('data').select('*').execute()
-    # data = response.data
-
     df = pd.DataFrame(data)
-    return df
+    df['month'] = pd.to_numeric(df['month'])
+    df_sorted = df.sort_values('month')
+    
+    # Group the sorted data by 'month' and calculate the sum of 'monto_facturacion'
+    grouped_df = df_sorted.groupby('month')['monto_facturacion'].sum().reset_index()
+    
+    # Convert the grouped DataFrame to a list of dictionaries
+    result = grouped_df.to_dict(orient='records')
+    
+    return result
     
     # monthly_totals = df['monto_facturacion'].tolist()
     # months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Sept.', 'Octubre', 'Nov.', 'Dic.']

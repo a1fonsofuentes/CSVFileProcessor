@@ -49,11 +49,21 @@ const Analitics = () => {
   const [selectedMonth, setSelectedMonth] = useState('1');
   const [imageKey, setImageKey] = useState(0);
   const [oportunidad1, setOportunidad1] = useState([])
+  const [anualSales, setAnualSales] = useState([])
   const fetchGraphs = async () => {
     const fetchData = async () => {
       try {
         const response = await axios.get('http://localhost:8000/get_total_facturacion');
         setData(response.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+    const fetchAnualSales = async () => {
+      try {
+        const response = await axios.get('http://localhost:8000/get_anual_sales_line_graph');
+        setAnualSales(response.data);
+        console.log(anualSales)
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -70,7 +80,6 @@ const Analitics = () => {
       try {
         const response = await axios.get('http://localhost:8000/get_oportunidad_anual');
         setOportunidad1(response.data);
-        console.log(oportunidad1)
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -97,6 +106,7 @@ const Analitics = () => {
     fetchData();
     fetchAvailableYears();
     fetchOportunidad1();
+    fetchAnualSales();
   }
   useEffect(() => {
     fetchGraphs()
@@ -157,6 +167,31 @@ const Analitics = () => {
     return ticks;
   };
 
+  const AnualSalesGraph = () => {
+    if (!anualSales || anualSales.length === 0) {
+      return <Spinner animation="border" variant="warning" />;
+    }
+    return (
+      <ResponsiveContainer width="100%" height={600}>
+        <LineChart margin={{ top: 20, right: 20, bottom: 20, left: 40 }} data={anualSales}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="month" domain={[0, 12]} />
+          <YAxis ticks={calculateTicks(Math.max(...anualSales.map(entry => entry.monto_facturacion)))} tickFormatter={(value) => `$${value.toLocaleString()}`} />
+          <Tooltip />
+          <Legend />
+          <Line
+            key='month'
+            type="monotone"
+            dataKey='monto_facturacion'
+            name='Ventas Totales'
+            stroke={`#50b3e5`}
+          />
+        </LineChart>
+      </ResponsiveContainer>
+    );
+  }
+
+
   const MultiLineChart = ({ data }) => {
     if (!data || data.length === 0) {
       return <Spinner animation="border" variant="warning" />;
@@ -164,12 +199,12 @@ const Analitics = () => {
     const products = ['DIGITALIZACION', 'GEMALTO PVC', 'CAMI APP', 'ONBASE', 'E-POWER', 'OTROS', 'FUJITSU', 'GEMALTO', 'BIZAGI'];
     return (
       <ResponsiveContainer width="100%" height={600}>
-        <LineChart margin={{top: 20, right: 20, bottom: 20, left: 40,}} data={data}>
+        <LineChart margin={{ top: 20, right: 20, bottom: 20, left: 40, }} data={data}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="month" domain={[1, 12]} />
           <YAxis scale={'sqrt'} ticks={calculateTicks(Math.max(...data?.map(entry => entry['GEMALTO PVC'])))} tickFormatter={(value) => `$${value.toLocaleString()}`} />
           <Tooltip />
-        <Legend />
+          <Legend />
           {products.map(product => (
             <Line
               key={product}
@@ -221,12 +256,7 @@ const Analitics = () => {
                     <h4>Gráfica anual - Ventas</h4>
                   </Card.Title>
                   <Card.Text>
-                    <img
-                      key={imageKey}
-                      src={`http://localhost:8000/get_anual_sales_line_graph_image?timestamp=${imageKey}`}
-                      alt="Anual Sales Graph"
-                      style={{ width: '90%' }}
-                    />
+                    {AnualSalesGraph()}
                   </Card.Text>
                 </Card>
                 <br />
