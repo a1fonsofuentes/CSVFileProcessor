@@ -148,7 +148,7 @@ const Analitics = () => {
 
   // const MultiLineChart = () => {
   //   const transformedData = transformDataForMultiline();
-  
+
   //   return (
   //     <LineChart width={800} height={400} data={transformedData}>
   //       <CartesianGrid strokeDasharray="3 3" />
@@ -399,6 +399,9 @@ const Analitics = () => {
                   <Card.Title>
                     <h4>Grafica Anual - PIE - Clientes</h4>
                   </Card.Title>
+                  <Card.Subtitle>
+                    Numero de Clientes: {clientes.length}
+                  </Card.Subtitle>
                   <Card.Text>
                     <div style={{ width: '100%', height: 600 }}>
                       <ResponsiveContainer>
