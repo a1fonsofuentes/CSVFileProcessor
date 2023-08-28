@@ -158,13 +158,16 @@ const Analitics = () => {
   };
 
   const MultiLineChart = ({ data }) => {
+    if (!data || data.length === 0) {
+      return <Spinner animation="border" variant="warning" />;
+    }
     const products = ['DIGITALIZACION', 'GEMALTO PVC', 'CAMI APP', 'ONBASE', 'E-POWER', 'OTROS', 'FUJITSU', 'GEMALTO', 'BIZAGI'];
     return (
       <ResponsiveContainer width="100%" height={600}>
         <LineChart margin={{top: 20, right: 20, bottom: 20, left: 40,}} data={data}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="month" domain={[1, 12]} />
-          <YAxis scale={'sqrt'} ticks={calculateTicks(Math.max(...data.map(entry => entry['GEMALTO PVC'])))} tickFormatter={(value) => `$${value.toLocaleString()}`} />
+          <YAxis scale={'sqrt'} ticks={calculateTicks(Math.max(...data?.map(entry => entry['GEMALTO PVC'])))} tickFormatter={(value) => `$${value.toLocaleString()}`} />
           <Tooltip />
         <Legend />
           {products.map(product => (
