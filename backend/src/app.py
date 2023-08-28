@@ -343,36 +343,37 @@ def anual_sales_line_graph():
     # data = response.data
 
     df = pd.DataFrame(data)
+    return df
     
-    monthly_totals = df['monto_facturacion'].tolist()
-    months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Sept.', 'Octubre', 'Nov.', 'Dic.']
+    # monthly_totals = df['monto_facturacion'].tolist()
+    # months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Sept.', 'Octubre', 'Nov.', 'Dic.']
 
-    plt.figure(figsize=(10, 6))  
-    plt.plot(months, monthly_totals, marker='o', color='#50B3E5')
-    plt.title('Progresión de ventas' , color='#50b3e5')
-    plt.xlabel('Mes', color='#50b3e5')
-    plt.ylabel('Ventas totales', color='#50b3e5')
-    plt.grid(True)
+    # plt.figure(figsize=(10, 6))  
+    # plt.plot(months, monthly_totals, marker='o', color='#50B3E5')
+    # plt.title('Progresión de ventas' , color='#50b3e5')
+    # plt.xlabel('Mes', color='#50b3e5')
+    # plt.ylabel('Ventas totales', color='#50b3e5')
+    # plt.grid(True)
 
-    ax = plt.gca()  # Get the current axes
+    # ax = plt.gca()  # Get the current axes
 
-    # Set the color of the graph border (spines)
-    for spine in ax.spines.values():
-        spine.set_edgecolor('#50b3e5')
+    # # Set the color of the graph border (spines)
+    # for spine in ax.spines.values():
+    #     spine.set_edgecolor('#50b3e5')
 
-    plt.yticks(range(100000, 1000001, 100000), ['$100,000', '$200,000', '$300,000', '$400,000', '$500,000', '$600,000', '$700,000', '$800,000', '$900,000', '$1,000,000'])
-    plt.xticks(rotation=45, color='#50b3e5')
+    # plt.yticks(range(100000, 1000001, 100000), ['$100,000', '$200,000', '$300,000', '$400,000', '$500,000', '$600,000', '$700,000', '$800,000', '$900,000', '$1,000,000'])
+    # plt.xticks(rotation=45, color='#50b3e5')
 
-    dot_indices = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]  
+    # dot_indices = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]  
 
-    cursor = mplcursors.cursor(hover=True)
-    cursor.connect("add", lambda sel: sel.annotation.set_text(f"${sel.target[1]:,.2f}") if sel.index in dot_indices else None)
+    # cursor = mplcursors.cursor(hover=True)
+    # cursor.connect("add", lambda sel: sel.annotation.set_text(f"${sel.target[1]:,.2f}") if sel.index in dot_indices else None)
 
-    plt.tight_layout()
-    # Save the graph as an image file
-    image_path = "sales_progression.png"
-    plt.savefig(image_path)
-    return image_path
+    # plt.tight_layout()
+    # # Save the graph as an image file
+    # image_path = "sales_progression.png"
+    # plt.savefig(image_path)
+    # return image_path
     
 @app.get("/get_available_years")
 async def get_available_years():
