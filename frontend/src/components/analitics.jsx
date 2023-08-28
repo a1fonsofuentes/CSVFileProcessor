@@ -192,7 +192,7 @@ const Analitics = () => {
       <Col className="justify-content-md-center">
         <Card style={{ backgroundColor: "#ffffff", color: "#333", fontSize: 15, textAlign: "center", padding: "20px", borderRadius: '10px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)', }}>
           <Card.Title style={{ color: "#50b3e5", fontSize: "24px", marginBottom: "10px" }}>
-            Analitics
+            Analytics
           </Card.Title>
           <Card.Subtitle>
             <YearSelector selectedYear={selectedYear} onSelectYear={setSelectedYear} availableYears={availableYears} />
@@ -203,7 +203,7 @@ const Analitics = () => {
               <>
                 <Card style={{ backgroundColor: "#ffffff", color: "#333", fontSize: 15, textAlign: "center", padding: "20px", borderRadius: '10px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)', }}>
                   <Card.Title>
-                    <h4>Grafica anual - Ventas</h4>
+                    <h4>Gráfica anual - Ventas</h4>
                   </Card.Title>
                   <Card.Text>
                     <img
@@ -218,7 +218,7 @@ const Analitics = () => {
                 <br />
                 <Card style={{ backgroundColor: "#ffffff", color: "#333", fontSize: 15, textAlign: "center", padding: "20px", borderRadius: '10px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)', }}>
                   <Card.Title>
-                    <h4>Grafica Mensual - Tipo de Venta</h4>
+                    <h4>Gráfica Mensual - Tipo de Venta</h4>
                   </Card.Title>
                   <Card.Subtitle>
                     <div style={{
@@ -259,7 +259,7 @@ const Analitics = () => {
                 <br />
                 <Card style={{ backgroundColor: "#ffffff", color: "#333", fontSize: 15, textAlign: "center", padding: "20px", borderRadius: '10px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)', }}>
                   <Card.Title>
-                    <h4>Grafica anual - Tipo de Venta</h4>
+                    <h4>Gráfica anual - Tipo de Venta</h4>
                   </Card.Title>
                   <Card.Text>
                     <div style={{ width: '100%', height: 600 }}>
@@ -291,7 +291,7 @@ const Analitics = () => {
                 <br />
                 <Card style={{ backgroundColor: "#ffffff", color: "#333", fontSize: 15, textAlign: "center", padding: "20px", borderRadius: '10px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)', }}>
                   <Card.Title>
-                    <h4>Grafica Anual - Producto Oportunidad</h4>
+                    <h4>Gráfica Anual - Producto Oportunidad</h4>
                   </Card.Title>
                   <Card.Text>
                     <div style={{ width: '100%', height: 600 }}>
@@ -334,7 +334,7 @@ const Analitics = () => {
                 <br /> */}
                 <Card style={{ backgroundColor: "#ffffff", color: "#333", fontSize: 15, textAlign: "center", padding: "20px", borderRadius: '10px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)', }}>
                   <Card.Title>
-                    <h4>Grafica Anual - PIE - Producto Oportunidad</h4>
+                    <h4>Gráfica Anual - PIE - Producto Oportunidad</h4>
                   </Card.Title>
                   <Card.Text>
                     <div style={{ width: '100%', height: 600 }}>
@@ -397,7 +397,7 @@ const Analitics = () => {
                 <br />
                 <Card style={{ backgroundColor: "#ffffff", color: "#333", fontSize: 15, textAlign: "center", padding: "20px", borderRadius: '10px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)', }}>
                   <Card.Title>
-                    <h4>Grafica Anual - PIE - Clientes</h4>
+                    <h4>Gráfica Anual - PIE - Clientes</h4>
                   </Card.Title>
                   <Card.Subtitle>
                     Numero de Clientes: {clientes.length}
@@ -470,7 +470,7 @@ const Analitics = () => {
             <br />
             <Card style={{ backgroundColor: "#ffffff", color: "#333", fontSize: 15, textAlign: "center", padding: "20px", borderRadius: '10px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)', }}>
               <Card.Title>
-                <h4>Grafica Regresion Lineal - Ventas</h4>
+                <h4>Regresión Lineal - Ventas</h4>
               </Card.Title>
               <Card.Text>
                 <img
