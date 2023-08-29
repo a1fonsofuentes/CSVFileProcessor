@@ -222,7 +222,7 @@ const Analitics = () => {
     }
     const products = ['DIGITALIZACION', 'GEMALTO PVC', 'CAMI APP', 'ONBASE', 'E-POWER', 'OTROS', 'FUJITSU', 'GEMALTO', 'BIZAGI'];
     return (
-      <ResponsiveContainer width="100%" height={600}>
+      <ResponsiveContainer width="100%" height={700}>
         <LineChart margin={{ top: 20, right: 20, bottom: 20, left: 40, }} data={data}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="month" domain={[1, 12]} />
@@ -318,7 +318,7 @@ const Analitics = () => {
                     </div>
                   </Card.Subtitle>
                   <Card.Text>
-                    <div style={{ width: '100%', height: 600 }}>
+                    <div style={{ width: '100%', height: 700 }}>
                       <ResponsiveContainer>
                         <ComposedChart
                           data={filterDataByMonthAndTipoVenta(selectedMonth)}
@@ -348,11 +348,11 @@ const Analitics = () => {
                     <h4>Gráfica anual - Tipo de Venta</h4>
                   </Card.Title>
                   <Card.Text>
-                    <div style={{ width: '100%', height: 600 }}>
+                    <div style={{ width: '100%', height: 700 }}>
                       <ResponsiveContainer>
                         <ComposedChart
                           width={1200}
-                          height={600}
+                          height={700}
                           data={chartData}
                           margin={{
                             top: 20,
@@ -380,11 +380,11 @@ const Analitics = () => {
                     <h4>Gráfica Anual - Producto Oportunidad</h4>
                   </Card.Title>
                   <Card.Text>
-                    <div style={{ width: '100%', height: 600 }}>
+                    <div style={{ width: '100%', height: 700 }}>
                       <ResponsiveContainer>
                         <ComposedChart
                           width={1200}
-                          height={600}
+                          height={700}
                           data={oportunidad}
                           margin={{
                             top: 20,
@@ -411,7 +411,7 @@ const Analitics = () => {
                     <h4>Grafica Anual - Producto Oportunidad</h4>
                   </Card.Title>
                   <Card.Text>
-                    <div style={{ width: '100%', height: 600 }}>
+                    <div style={{ width: '100%', height: 700 }}>
                       {MultiLineChart(oportunidad1)}
                     </div>
                   </Card.Text>
