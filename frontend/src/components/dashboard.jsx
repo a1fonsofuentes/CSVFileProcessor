@@ -15,10 +15,7 @@ const Dashboard = () => {
     const [downloadLink, setDownloadLink] = useState(null);
     const [processedData, setProcessedData] = useState([]);
     const [dataProcessed, setDataProcessed] = useState(false);
-    const [nav, setNav] = useState('default')
-    useEffect(() => {
-        document.title = 'Camilitics - CSV tools';
-      }, []);
+    const [nav, setNav] = useState('')
 
     const handleFileChange = (event) => {
         setSelectedFile(event.target.files[0]);
@@ -97,6 +94,7 @@ const Dashboard = () => {
                             transition: Bounce
                         });
                     } else {
+                        setNav('default')
                         toast.update('toast', {
                             render: 'success',
                             type: toast.TYPE.SUCCESS,
@@ -135,11 +133,12 @@ const Dashboard = () => {
     };
 
     const handleTabSelect = (selectedKey) => {
-        if (selectedKey === 'file') {
+        if (selectedKey === 'default') {
+            document.title = 'Camilitics - Visualizar CSV';
             setNav('default');
-        } else if (selectedKey === 'linkHistorico') {
+        } else if (selectedKey === 'historico') {
             setNav('historico');
-        } else if (selectedKey === 'linkAnalitics') {
+        } else if (selectedKey === 'anal') {
             setNav('anal');
         }
     };
@@ -196,15 +195,15 @@ const Dashboard = () => {
                 <br />
                 <Row>
                     <Col>
-                        <Nav variant="tabs" defaultActiveKey={'file'} onSelect={handleTabSelect}>
+                        <Nav variant="tabs" defaultActiveKey={''} activeKey={nav} onSelect={handleTabSelect}>
                             <Nav.Item>
-                                <Nav.Link eventKey={'file'} style={{ color: ((nav == 'default') ? '#387DA0' : '#ffc416'), }}>Visualizar Archivo Procesado</Nav.Link>
+                                <Nav.Link eventKey={'default'} style={{ color: ((nav == 'default') ? '#387DA0' : '#ffc416'), }}>Visualizar Archivo Procesado</Nav.Link>
                             </Nav.Item>
                             <Nav.Item>
-                                <Nav.Link eventKey={'linkHistorico'} style={{ color: ((nav == 'historico') ? '#387DA0' : '#ffc416'), }}>Historico</Nav.Link>
+                                <Nav.Link eventKey={'historico'} style={{ color: ((nav == 'historico') ? '#387DA0' : '#ffc416'), }}>Historico</Nav.Link>
                             </Nav.Item>
                             <Nav.Item>
-                                <Nav.Link eventKey={'linkAnalitics'} style={{ color: ((nav == 'anal') ? '#387DA0' : '#ffc416'), }}>Analytics</Nav.Link>
+                                <Nav.Link eventKey={'anal'} style={{ color: ((nav == 'anal') ? '#387DA0' : '#ffc416'), }}>Analytics</Nav.Link>
                             </Nav.Item>
                         </Nav>
                     </Col>
