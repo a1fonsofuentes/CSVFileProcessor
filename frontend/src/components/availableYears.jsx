@@ -1,13 +1,16 @@
 import { Form } from 'react-bootstrap';
 import axios from 'axios';
 
-const YearSelector = ({ selectedYear, onSelectYear, availableYears }) => {
+const YearSelector = ({ selectedYear, onSelectYear, availableYears, post, onComparisonDataReceived }) => {
   const handleYearChange = async (event) => {
     const newSelectedYear = event.target.value;
     onSelectYear(newSelectedYear);
-    
     try {
-      const response = await axios.post('http://localhost:8000/update_highest_id?selected_year='+newSelectedYear);
+      const response = await axios.post(post + newSelectedYear);
+      if (onComparisonDataReceived) {
+        const comparisonData = response.data;
+        onComparisonDataReceived(comparisonData);
+      }
     } catch (error) {
       console.error('Error updating highest_id:', error);
     }
@@ -32,7 +35,6 @@ const YearSelector = ({ selectedYear, onSelectYear, availableYears }) => {
         </Form>
       )}
     </>
-
   );
 };
 

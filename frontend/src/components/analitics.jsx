@@ -45,11 +45,13 @@ const Analitics = () => {
   const [oportunidad, setOportunidad] = useState([]);
   const [clientes, setClientes] = useState([]);
   const [selectedYear, setSelectedYear] = useState();
+  const [selectedYearComparison, setSelectedYearComparison] = useState();
   const [availableYears, setAvailableYears] = useState([]);
   const [selectedMonth, setSelectedMonth] = useState('1');
   const [imageKey, setImageKey] = useState(0);
   const [oportunidad1, setOportunidad1] = useState([])
   const [anualSales, setAnualSales] = useState([])
+  const [comparisonData, setcomparisonData] = useState([])
   const fetchGraphs = async () => {
     const fetchData = async () => {
       try {
@@ -63,7 +65,6 @@ const Analitics = () => {
       try {
         const response = await axios.get('http://localhost:8000/get_anual_sales_line_graph');
         setAnualSales(response.data);
-        console.log(anualSales)
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -168,16 +169,28 @@ const Analitics = () => {
     return ticks;
   };
 
-  const AnualSalesGraph = () => {
+  const AnualSalesGraph = ({ comparisonData }) => {
     if (!anualSales || anualSales.length === 0) {
       return <Spinner animation="border" variant="warning" />;
     }
+  
+    // Merge comparisonData into anualSales based on the 'month' property
+    const mergedData = comparisonData.length > 0
+      ? anualSales.map((entry) => {
+          const comparisonEntry = comparisonData.find((compEntry) => compEntry.month === entry.month);
+          return {
+            ...entry,
+            monto_facturacion_comparacion: comparisonEntry ? comparisonEntry.monto_facturacion : 0,
+          };
+        })
+      : anualSales;
+  
     return (
       <ResponsiveContainer width="100%" height={600}>
-        <LineChart margin={{ top: 20, right: 20, bottom: 20, left: 40 }} data={anualSales}>
+        <LineChart margin={{ top: 20, right: 20, bottom: 20, left: 40 }} data={mergedData}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="month" domain={[0, 12]} />
-          <YAxis ticks={calculateTicks(Math.max(...anualSales.map(entry => entry.monto_facturacion)))} tickFormatter={(value) => `$${value.toLocaleString()}`} />
+          <YAxis ticks={calculateTicks(Math.max(...mergedData.map(entry => entry.monto_facturacion)))} tickFormatter={(value) => `$${value.toLocaleString()}`} />
           <Tooltip />
           <Legend />
           <Line
@@ -186,11 +199,21 @@ const Analitics = () => {
             dataKey='monto_facturacion'
             name='Ventas Totales'
             stroke={`#50b3e5`}
+            strokeWidth={3}
           />
+          {comparisonData.length > 0 && (
+            <Line
+              type="monotone"
+              dataKey="monto_facturacion_comparacion"
+              name="Ventas Comparación"
+              stroke="red"
+              strokeWidth={2}
+            />
+          )}
         </LineChart>
       </ResponsiveContainer>
     );
-  }
+  }  
 
 
   const MultiLineChart = ({ data }) => {
@@ -213,6 +236,7 @@ const Analitics = () => {
               dataKey={product}
               name={product}
               stroke={`#${Math.floor(Math.random() * 16777215).toString(16)}`}
+              strokeWidth={3}
             />
           ))}
         </LineChart>
@@ -237,6 +261,10 @@ const Analitics = () => {
     return totals;
   }, {});
 
+  const handleComparisonDataReceived = (data) => {
+    setcomparisonData(data); // Update the state with the received comparison data
+  };
+
   const chartData = Object.values(tipoVentaTotals);
   return (
     <Row>
@@ -246,7 +274,7 @@ const Analitics = () => {
             Analytics
           </Card.Title>
           <Card.Subtitle>
-            <YearSelector selectedYear={selectedYear} onSelectYear={setSelectedYear} availableYears={availableYears} />
+            <YearSelector selectedYear={selectedYear} onSelectYear={setSelectedYear} availableYears={availableYears} post={'http://localhost:8000/update_highest_id?selected_year='} />
             <br />
           </Card.Subtitle>
           <Card.Text>
@@ -256,8 +284,20 @@ const Analitics = () => {
                   <Card.Title>
                     <h4>Gráfica anual - Ventas</h4>
                   </Card.Title>
+                  <Card.Subtitle>
+                    <Container>
+                      <Row>
+                        <Col></Col>
+                        <Col></Col>
+                        <Col>
+                          Comparar:
+                          <YearSelector selectedYear={selectedYearComparison} onSelectYear={setSelectedYearComparison} availableYears={availableYears} post={'http://localhost:8000/get_comparison_sales?selected_year='} onComparisonDataReceived={handleComparisonDataReceived} />
+                        </Col>
+                      </Row>
+                    </Container>
+                  </Card.Subtitle>
                   <Card.Text>
-                    {AnualSalesGraph()}
+                    <AnualSalesGraph comparisonData={comparisonData} />
                   </Card.Text>
                 </Card>
                 <br />

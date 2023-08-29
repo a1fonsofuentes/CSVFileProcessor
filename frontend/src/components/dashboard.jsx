@@ -134,7 +134,7 @@ const Dashboard = () => {
 
     const handleTabSelect = (selectedKey) => {
         if (selectedKey === 'default') {
-            document.title = 'Camilitics - Visualizar CSV';
+            document.title = 'Camilytics - Visualizar CSV';
             setNav('default');
         } else if (selectedKey === 'historico') {
             setNav('historico');

@@ -323,6 +323,25 @@ def supabase_queries():
     data = supabase.table('data').select('*').execute()
     print(data)
 
+@app.post("/get_comparison_sales")
+async def fetch_comparison_data(selected_year: str):
+    highest_id_comparison_response = supabase.from_('data').select('upload').eq('year', selected_year).order('upload', desc=True).limit(1).execute()
+    highest_id_comparison_data = highest_id_comparison_response.data[0]['upload']
+    response = supabase.from_('data').select('month', 'producto', 'monto_facturacion').eq('upload', highest_id_comparison_data).eq('total_tipo_venta', '– TOTAL DEL MES – ').limit(1000).execute()
+    data = response.data
+    
+    df = pd.DataFrame(data)
+    df['month'] = pd.to_numeric(df['month'])
+    df_sorted = df.sort_values('month')
+    
+    # Group the sorted data by 'month' and calculate the sum of 'monto_facturacion'
+    grouped_df = df_sorted.groupby('month')['monto_facturacion'].sum().reset_index()
+    
+    # Convert the grouped DataFrame to a list of dictionaries
+    result = grouped_df.to_dict(orient='records')
+    
+    return result
+
 @app.get("/get_anual_sales_line_graph")
 async def get_anual_sales_line_graph():
     data = anual_sales_line_graph()
