@@ -16,7 +16,9 @@ const Dashboard = () => {
     const [processedData, setProcessedData] = useState([]);
     const [dataProcessed, setDataProcessed] = useState(false);
     const [nav, setNav] = useState('default')
-
+    useEffect(() => {
+        document.title = 'Camilitics - CSV tools';
+      }, []);
 
     const handleFileChange = (event) => {
         setSelectedFile(event.target.files[0]);

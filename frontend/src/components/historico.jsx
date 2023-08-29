@@ -10,6 +10,7 @@ const Historico = () => {
     const [years, setYears] = useState([]);
 
     useEffect(() => {
+        document.title = 'Camilitics - CSV historial';
         async function fetchData() {
             try {
                 const response = await axios.get('http://localhost:8000/data'); // Change the URL to match your backend endpoint
