@@ -110,7 +110,7 @@ const Analitics = () => {
     fetchAnualSales();
   }
   useEffect(() => {
-    document.title = 'Camilitics - Analitics';
+    document.title = 'Camilytics - Analytics';
     fetchGraphs()
   }, [selectedYear]);
 

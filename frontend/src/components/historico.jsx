@@ -10,7 +10,7 @@ const Historico = () => {
     const [years, setYears] = useState([]);
 
     useEffect(() => {
-        document.title = 'Camilitics - CSV historial';
+        document.title = 'Camilytics - CSV historial';
         async function fetchData() {
             try {
                 const response = await axios.get('http://localhost:8000/data'); // Change the URL to match your backend endpoint
@@ -54,6 +54,7 @@ const Historico = () => {
                                 ))}
                             </Form.Select>
                             <br />
+                            {console.log(filteredData)}
                             {filteredData.map((upload) => (
                                 upload.data.length > 0 && (<Accordion>
                                     <Accordion.Item key={upload.uploadDate} eventKey={upload.uploadDate}>
@@ -82,10 +83,10 @@ const Historico = () => {
                                                             <td>{row.month}</td>
                                                             <td>{row.total_tipo_venta}</td>
                                                             <td>{row.producto}</td>
-                                                            <td>{row.Cuenta}</td>
+                                                            <td>{row.cuenta}</td>
                                                             <td>{row.monto_facturacion}</td>
                                                             <td>{row.costo_detalle_facturacion}</td>
-                                                            <td>{row.Utilidad}</td>
+                                                            <td>{row.utilidad}</td>
                                                             <td>{row.margin}</td>
                                                         </tr>)
                                                     })}
