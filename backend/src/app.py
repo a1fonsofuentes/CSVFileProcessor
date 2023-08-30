@@ -50,6 +50,14 @@ highest_id22 = highest_id_response22.data[0]['upload']
 highest_id_response23 = supabase.from_('data').select('upload').eq('year', '2.023').order('upload', desc=True).limit(1).execute()
 highest_id23 = highest_id_response.data[0]['upload']
 
+
+response = supabase.from_('data').select('producto').eq('upload', highest_id).limit(1000).execute()
+data = response.data
+all_products = [item['producto'] for item in data if item['producto'] != None and item['producto'] != '']
+productos = list(set(all_products))
+
+
+
 security = HTTPBasic()
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -484,7 +492,7 @@ def producto_oportunidad_query():
 
     dataframes = []
     final_list = []
-    productos = ['DIGITALIZACION', 'GEMALTO PVC', 'CAMI APP', 'ONBASE', 'E-POWER', 'OTROS', 'FUJITSU', 'GEMALTO', 'BIZAGI']
+    # productos = ['DIGITALIZACION', 'GEMALTO PVC', 'CAMI APP', 'ONBASE', 'E-POWER', 'OTROS', 'FUJITSU', 'GEMALTO', 'BIZAGI']
 
     for producto in productos:
         response = supabase.from_('data').select('monto_facturacion').eq('upload', highest_id).eq('producto', producto).limit(1000).execute()
@@ -517,7 +525,7 @@ def clientes():
 
         monto_facturacion_values = [item['monto_facturacion'] for item in data]
 
-        sum_monto_facturacion = sum(monto_facturacion_values)
+        sum_monto_facturacion = round(sum(monto_facturacion_values), 2)
         if sum_monto_facturacion != 0:
             final_list.append({
                 'cliente': cliente,
@@ -536,7 +544,7 @@ async def get_oportunidad_anual():
         raise HTTPException(status_code=500, detail="An error occurred.")
 
 def producto_oportunidad1():
-    productos = ['DIGITALIZACION', 'GEMALTO PVC', 'CAMI APP', 'ONBASE', 'E-POWER', 'OTROS', 'FUJITSU', 'GEMALTO', 'BIZAGI']
+    # productos = ['DIGITALIZACION', 'GEMALTO PVC', 'CAMI APP', 'ONBASE', 'E-POWER', 'OTROS', 'FUJITSU', 'GEMALTO', 'BIZAGI']
     result = []
 
     for month in range(1, 13):
@@ -548,7 +556,7 @@ def producto_oportunidad1():
             response = supabase.from_('data').select('monto_facturacion').eq('upload', highest_id).eq('producto', producto).eq('month', month).limit(1000).execute()
             data = response.data
             if data:
-                month_data[producto] = sum((pd.DataFrame(data))['monto_facturacion'].tolist())
+                month_data[producto] = round(sum((pd.DataFrame(data))['monto_facturacion'].tolist()), 2)
             else:
                 month_data[producto] = 0
         
