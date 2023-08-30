@@ -169,29 +169,39 @@ const Analitics = () => {
     return ticks;
   };
 
+  const moneyFormatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 0,
+  });
+
   const AnualSalesGraph = ({ comparisonData }) => {
     if (!anualSales || anualSales.length === 0) {
       return <Spinner animation="border" variant="warning" />;
     }
-  
+
     // Merge comparisonData into anualSales based on the 'month' property
     const mergedData = comparisonData.length > 0
       ? anualSales.map((entry) => {
-          const comparisonEntry = comparisonData.find((compEntry) => compEntry.month === entry.month);
-          return {
-            ...entry,
-            monto_facturacion_comparacion: comparisonEntry ? comparisonEntry.monto_facturacion : 0,
-          };
-        })
+        const comparisonEntry = comparisonData.find((compEntry) => compEntry.month === entry.month);
+        return {
+          ...entry,
+          monto_facturacion_comparacion: comparisonEntry ? comparisonEntry.monto_facturacion : 0,
+        };
+      })
       : anualSales;
-  
+
+
     return (
       <ResponsiveContainer width="100%" height={600}>
         <LineChart margin={{ top: 20, right: 20, bottom: 20, left: 40 }} data={mergedData}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="month" domain={[0, 12]} />
           <YAxis ticks={calculateTicks(Math.max(...mergedData.map(entry => entry.monto_facturacion)))} tickFormatter={(value) => `$${value.toLocaleString()}`} />
-          <Tooltip />
+          <Tooltip
+            labelFormatter={(value) => `Month ${value}`}
+            formatter={(value, name, entry) => moneyFormatter.format(value)}
+          />
           <Legend />
           <Line
             key='month'
@@ -213,7 +223,7 @@ const Analitics = () => {
         </LineChart>
       </ResponsiveContainer>
     );
-  }  
+  }
 
 
   const MultiLineChart = ({ data }) => {
@@ -227,7 +237,10 @@ const Analitics = () => {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="month" domain={[1, 12]} />
           <YAxis scale={'sqrt'} ticks={calculateTicks(Math.max(...data?.map(entry => entry['GEMALTO PVC'])))} tickFormatter={(value) => `$${value.toLocaleString()}`} />
-          <Tooltip />
+          <Tooltip
+            labelFormatter={(value) => `Month ${value}`}
+            formatter={(value, name, entry) => moneyFormatter.format(value)}
+          />
           <Legend />
           {products.map(product => (
             <Line
@@ -332,7 +345,10 @@ const Analitics = () => {
                           <CartesianGrid stroke="#50b3e5" />
                           <XAxis dataKey="total_tipo_venta" stroke="#50b3e5" />
                           <YAxis scale={'sqrt'} ticks={calculateTicks(Math.max(...filterDataByMonthAndTipoVenta(selectedMonth).map(entry => entry.monto_facturacion_total)))} tickCount={15} tickFormatter={(value) => `$${value.toLocaleString()}`} />
-                          <Tooltip />
+                          <Tooltip
+                            labelFormatter={(value) => `Month ${value}`}
+                            formatter={(value, name, entry) => moneyFormatter.format(value)}
+                          />
                           <Legend />
                           <Bar dataKey="utilidad_total" barSize={30} fill="#ffc416" />
                           <Bar dataKey="monto_facturacion_total" barSize={30} fill="#50b3e5" />
@@ -364,7 +380,10 @@ const Analitics = () => {
                           <CartesianGrid stroke="#50b3e5" />
                           <XAxis dataKey="total_tipo_venta" stroke="#50b3e5" />
                           <YAxis ticks={calculateTicks(Math.max(...chartData.map(entry => entry.monto_facturacion_total)))} scale={'sqrt'} tickCount={15} tickFormatter={(value) => `$${value.toLocaleString()}`} />
-                          <Tooltip />
+                          <Tooltip
+                            labelFormatter={(value) => `Month ${value}`}
+                            formatter={(value, name, entry) => moneyFormatter.format(value)}
+                          />
                           <Legend />
                           <Bar dataKey="utilidad_total" barSize={30} fill="#ffc416" />
                           <Bar dataKey="monto_facturacion_total" barSize={30} fill="#50b3e5" />
@@ -396,7 +415,10 @@ const Analitics = () => {
                           <CartesianGrid stroke="#50b3e5" />
                           <XAxis dataKey="producto" stroke="#50b3e5" />
                           <YAxis ticks={calculateTicks(Math.max(...oportunidad.map(entry => entry.monto_facturacion)))} scale={'sqrt'} tickCount={15} tickFormatter={(value) => `$${value.toLocaleString()}`} />
-                          <Tooltip />
+                          <Tooltip
+                            labelFormatter={(value) => `Month ${value}`}
+                            formatter={(value, name, entry) => moneyFormatter.format(value)}
+                          />
                           <Legend />
                           <Bar dataKey="monto_facturacion" barSize={30} fill="#ffc416" />
                         </ComposedChart>
