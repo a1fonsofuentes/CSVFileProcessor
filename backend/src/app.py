@@ -50,6 +50,11 @@ highest_id22 = highest_id_response22.data[0]['upload']
 highest_id_response23 = supabase.from_('data').select('upload').eq('year', '2.023').order('upload', desc=True).limit(1).execute()
 highest_id23 = highest_id_response.data[0]['upload']
 
+response = supabase.from_("data").select("year").execute()
+available_years = [row["year"] for row in response.data]
+unique_years_set = set(available_years)
+unique_years_list = list(unique_years_set)
+
 
 response = supabase.from_('data').select('producto').eq('upload', highest_id).limit(1000).execute()
 data = response.data
@@ -407,80 +412,89 @@ def anual_sales_line_graph():
 @app.get("/get_available_years")
 async def get_available_years():
     try:
-        global highest_id, highest_id_response
+        global highest_id, highest_id_response, unique_years_list
         response = supabase.from_("data").select("year").execute()
         available_years = [row["year"] for row in response.data]
         unique_years_set = set(available_years)
         unique_years_list = list(unique_years_set)
+        
         return {"availableYears": unique_years_list}
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=500)
 
 @app.get("/get_lineal_regresion_image")
 async def get_lineal_regresion_image():
-    image_path = linear_regression()
+    value_to_remove = ''
+    regression_years = unique_years_list.remove(value_to_remove)
+    print(unique_years_list)
+    image_path = linear_regression(unique_years_list)
     # Check if the image file exists
     if os.path.exists(image_path):
         return FileResponse(image_path, media_type="image/png")
     else:
         return JSONResponse(content={"error": "Image not found"}, status_code=404)
 
-def linear_regression():
-    response1 = supabase.from_('data').select('monto_facturacion').eq('upload', highest_id22).eq('total_tipo_venta', '– TOTAL DEL MES – ').limit(1000).execute() 
-    data = response1.data
-
-    response2 = supabase.from_('data').select('monto_facturacion').eq('upload', highest_id23).eq('total_tipo_venta', '– TOTAL DEL MES – ').limit(1000).execute()
-    data2 = response2.data
-    df = pd.DataFrame(data)
-    df2 = pd.DataFrame(data2)
-    
-    year1_sales = df['monto_facturacion'].tolist()
-    year2_sales = df2['monto_facturacion'].tolist()
-    months = np.arange(1, 13)
-
-    combined_sales = year1_sales + year2_sales
-    combined_months = np.tile(months, 2)
-
-    model = LinearRegression()
-
+def linear_regression(years):
     plt.style.use('seaborn-darkgrid')
     plt.figure(figsize=(10, 6))
 
-    X = combined_months.reshape(-1, 1)
+    combined_sales = []
+    combined_months = []
+
+    for year in years:
+        highest_id_response = supabase.from_('data').select('upload').eq('year', str(year)).order('upload', desc=True).limit(1).execute()
+        highest_id = highest_id_response.data[0]['upload']
+
+        response = supabase.from_('data').select('monto_facturacion').eq('upload', highest_id).eq('total_tipo_venta', '– TOTAL DEL MES – ').limit(1000).execute()
+        data = response.data
+        df = pd.DataFrame(data)
+        
+        year_sales = df['monto_facturacion'].tolist()
+        print(year_sales)
+        months = np.arange(1, 13)
+        
+        combined_sales.extend(year_sales)  # Extend the sales data list
+        combined_months.extend(months)     # Extend the months list for each year
+        
+        print(f"Year: {year}, Sales Length: {len(year_sales)}, Months Length: {len(months)}")
+
+    print(f"Combined Sales Length: {len(combined_sales)}, Combined Months Length: {len(combined_months)}")
+
+    model = LinearRegression()
+
+    X = np.array(combined_months).reshape(-1, 1)
     y = np.array(combined_sales)
     model.fit(X, y)
 
     y_pred = model.predict(X)
-    plt.scatter(combined_months[12:], year2_sales, color='#ffc416', label='Ventas en 2023', s=80)
-    plt.scatter(combined_months[:12], year1_sales, color='#50b3e5', label='Ventas en 2022', s=80)
-    
-    
-    plt.plot(combined_months, y_pred, label='Combined Regression Line', color='#818282', linewidth=1.5)
 
-    total_sales = 0
     for i, txt in enumerate(y_pred):
-        plt.annotate(f'${int(txt):,}', (combined_months[i], txt), textcoords="offset points", xytext=(0,10), ha='center')
-        total_sales += txt
+        plt.annotate(f'${int(txt):,}', (combined_months[i], txt), textcoords="offset points", xytext=(0, 10), ha='center')
 
     coef = model.coef_[0]
     intercept = model.intercept_
     plt.text(6, 900000, f'Regression Line: y = {coef:.2f}x + {intercept:.2f}', fontsize=12, color='black')
-    plt.text(6, 800000, f'Predicción de ventas totales : ${int(total_sales):,}', fontsize=12, color='blue')
+    
+    total_sales = np.sum(y_pred)
+    plt.text(6, 800000, f'Predicted Total Sales: ${int(total_sales):,}', fontsize=12, color='blue')
 
+    plt.scatter(combined_months, y, color='blue', label='Sales Data', s=80)
+    plt.plot(combined_months, y_pred, label='Regression Line', color='red', linewidth=1.5)
 
-    #plt.title('Modelo de regresión lineal de ventas totales', fontsize=16)
-    plt.xlabel('Mes', fontsize=14)
-    plt.ylabel('Ventas Totales', fontsize=14)
+    plt.xlabel('Month', fontsize=14)
+    plt.ylabel('Total Sales', fontsize=14)
     plt.legend(fontsize=12, loc='upper left')  
-
     plt.grid(True, alpha=0.5)
-    plt.xticks(months, fontsize=12)
+    plt.xticks(np.arange(1, 13), fontsize=12)
     plt.yticks(np.arange(200000, 1000001, 200000), ['$200,000', '$400,000', '$600,000', '$800,000', '$1,000,000'], fontsize=12)
 
     plt.legend(fontsize=12)
     plt.tight_layout()
+
     image_path = "linear_regression_sales.png"
     plt.savefig(image_path)
+
+
     return image_path
 
 @app.get("/get_producto_oportunidad")
@@ -489,27 +503,29 @@ async def get_producto_oportunidad():
     return {"producto_oportunidad": producto_oportunidad_data}
 
 def producto_oportunidad_query():
-
-    dataframes = []
-    final_list = []
-    # productos = ['DIGITALIZACION', 'GEMALTO PVC', 'CAMI APP', 'ONBASE', 'E-POWER', 'OTROS', 'FUJITSU', 'GEMALTO', 'BIZAGI']
-
+    producto_totals = {}
     for producto in productos:
-        response = supabase.from_('data').select('monto_facturacion').eq('upload', highest_id).eq('producto', producto).limit(1000).execute()
-        data = response.data
-        dataframes.append((pd.DataFrame(data))['monto_facturacion'].tolist())
-    
-    for i in range(len(dataframes)):
-        final_list.append(sum(dataframes[i]))
-    
-    array = []
-    for i, product in enumerate(productos):
-        array.append({
-            'producto': product,
-            'monto_facturacion': final_list[i]
-        })
+        response1 = supabase.from_('data').select('month', 'monto_facturacion').eq('upload', highest_id).eq('producto', producto).limit(1000).execute()
+        data = response1.data
+        
+        if data:
+            df = pd.DataFrame(data)
+            grouped = df.groupby('month')['monto_facturacion'].sum()
 
-    return array
+            for month, total in grouped.items():
+                if producto in producto_totals:
+                    producto_totals[producto] += total
+                else:
+                    producto_totals[producto] = total
+    
+    output_array = []
+    for producto, total_facturacion in producto_totals.items():
+        output_array.append({
+            'producto': producto,
+            'monto_facturacion': round(total_facturacion, 2)
+        })
+    
+    return output_array
 
 @app.get("/get_clientes")
 async def get_clientes():

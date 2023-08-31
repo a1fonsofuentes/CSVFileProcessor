@@ -448,6 +448,7 @@ const Analitics = () => {
                     <div style={{ width: '100%', height: 600 }}>
                       <ResponsiveContainer>
                         <PieChart>
+                          {console.log(oportunidad)}
                           <Pie
                             dataKey="monto_facturacion"
                             isAnimationActive={true}
