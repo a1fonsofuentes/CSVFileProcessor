@@ -468,7 +468,7 @@ def linear_regression():
     plt.text(6, 800000, f'Predicción de ventas totales : ${int(total_sales):,}', fontsize=12, color='blue')
 
 
-    plt.title('Modelo de regresión lineal de ventas totales', fontsize=16)
+    #plt.title('Modelo de regresión lineal de ventas totales', fontsize=16)
     plt.xlabel('Mes', fontsize=14)
     plt.ylabel('Ventas Totales', fontsize=14)
     plt.legend(fontsize=12, loc='upper left')  
