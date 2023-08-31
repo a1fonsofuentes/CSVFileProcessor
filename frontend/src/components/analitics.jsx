@@ -199,7 +199,7 @@ const Analitics = () => {
           <XAxis dataKey="month" domain={[0, 12]} tickFormatter={(monthNumber) => monthNames[monthNumber]}/>
           <YAxis ticks={calculateTicks(Math.max(...mergedData.map(entry => entry.monto_facturacion)))} tickFormatter={(value) => `$${value.toLocaleString()}`} />
           <Tooltip
-            labelFormatter={(value) => `Month ${value}`}
+            labelFormatter={(value) => `${monthNames[value]}`}
             formatter={(value, name, entry) => moneyFormatter.format(value)}
           />
           <Legend />
@@ -238,7 +238,7 @@ const Analitics = () => {
           <XAxis dataKey="month" domain={[1, 12]} tickFormatter={(monthNumber) => monthNames[monthNumber]}/>
           <YAxis scale={'sqrt'} ticks={calculateTicks(Math.max(...data?.map(entry => entry['GEMALTO PVC'])))} tickFormatter={(value) => `$${value.toLocaleString()}`} />
           <Tooltip
-            labelFormatter={(value) => `Month ${value}`}
+            labelFormatter={(value) => `${monthNames[value]}`}
             formatter={(value, name, entry) => moneyFormatter.format(value)}
           />
           <Legend />
