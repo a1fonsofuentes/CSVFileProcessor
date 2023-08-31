@@ -196,7 +196,7 @@ const Analitics = () => {
       <ResponsiveContainer width="100%" height={600}>
         <LineChart margin={{ top: 20, right: 20, bottom: 20, left: 40 }} data={mergedData}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="month" domain={[0, 12]} />
+          <XAxis dataKey="month" domain={[0, 12]} tickFormatter={(monthNumber) => monthNames[monthNumber]}/>
           <YAxis ticks={calculateTicks(Math.max(...mergedData.map(entry => entry.monto_facturacion)))} tickFormatter={(value) => `$${value.toLocaleString()}`} />
           <Tooltip
             labelFormatter={(value) => `Month ${value}`}
@@ -230,12 +230,12 @@ const Analitics = () => {
     if (!data || data.length === 0) {
       return <Spinner animation="border" variant="warning" />;
     }
-    const products = ['DIGITALIZACION', 'GEMALTO PVC', 'CAMI APP', 'ONBASE', 'E-POWER', 'OTROS', 'FUJITSU', 'GEMALTO', 'BIZAGI'];
+    const products = Object.keys(data[0]).filter(key => key !== 'month');
     return (
       <ResponsiveContainer width="100%" height={700}>
         <LineChart margin={{ top: 20, right: 20, bottom: 20, left: 40, }} data={data}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="month" domain={[1, 12]} />
+          <XAxis dataKey="month" domain={[1, 12]} tickFormatter={(monthNumber) => monthNames[monthNumber]}/>
           <YAxis scale={'sqrt'} ticks={calculateTicks(Math.max(...data?.map(entry => entry['GEMALTO PVC'])))} tickFormatter={(value) => `$${value.toLocaleString()}`} />
           <Tooltip
             labelFormatter={(value) => `Month ${value}`}
