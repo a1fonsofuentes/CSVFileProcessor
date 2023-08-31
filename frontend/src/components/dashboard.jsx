@@ -63,7 +63,7 @@ const Dashboard = () => {
                 const controllerId = controllerResponse.data[0].id;
                 for (let rowIndex = 1; rowIndex < processedArray.length; rowIndex++) {
                     const row = processedArray[rowIndex]; // Use row directly
-                
+
                     const { data, error } = await supabase
                         .from('data')
                         .insert([
@@ -144,7 +144,7 @@ const Dashboard = () => {
     };
 
     return (
-        <div style={{ backgroundImage: `url(${background})`,backgroundSize: '100%', backgroundRepeat: 'repeat-y', minHeight: "100vh", padding: "20px" }}>
+        <div style={{ backgroundImage: `url(${background})`, backgroundSize: '100%', backgroundRepeat: 'repeat-y', minHeight: "100vh", padding: "20px" }}>
             <Container>
                 <Row className="justify-content-md-center">
                     <Col>
@@ -197,13 +197,13 @@ const Dashboard = () => {
                     <Col>
                         <Nav variant="tabs" defaultActiveKey={''} activeKey={nav} onSelect={handleTabSelect}>
                             <Nav.Item>
-                                <Nav.Link eventKey={'default'} style={{ color: ((nav == 'default') ? '#387DA0' : '#ffc416'), }}>Visualizar Archivo Procesado</Nav.Link>
+                                <Nav.Link eventKey={'default'} style={{ color: (nav === 'default') ? '#387DA0' : '#ffc416', fontSize: 18, backgroundColor: (nav === 'default') ? '' : 'rgba(0,0,0, 0.4)' }}>Visualizar Archivo Procesado</Nav.Link>
                             </Nav.Item>
                             <Nav.Item>
-                                <Nav.Link eventKey={'historico'} style={{ color: ((nav == 'historico') ? '#387DA0' : '#ffc416'), }}>Historico</Nav.Link>
+                                <Nav.Link eventKey={'historico'} style={{ color: (nav === 'historico') ? '#387DA0' : '#ffc416', fontSize: 18, backgroundColor: (nav === 'historico') ? '' : 'rgba(0,0,0, 0.4)' }}>Histórico</Nav.Link>
                             </Nav.Item>
                             <Nav.Item>
-                                <Nav.Link eventKey={'anal'} style={{ color: ((nav == 'anal') ? '#387DA0' : '#ffc416'), }}>Analytics</Nav.Link>
+                                <Nav.Link eventKey={'anal'} style={{ color: (nav === 'anal') ? '#387DA0' : '#ffc416', fontSize: 18, backgroundColor: (nav === 'anal') ? '' : 'rgba(0,0,0, 0.4)' }}>Analytics</Nav.Link>
                             </Nav.Item>
                         </Nav>
                     </Col>
@@ -227,7 +227,7 @@ const Dashboard = () => {
                                         <thead>
                                             <tr>
                                                 {processedData[0].map((header, index) => (
-                                                    <th key={index} style={{color: '#50b3e5'}}>{header}</th>
+                                                    <th key={index} style={{ color: '#50b3e5' }}>{header}</th>
                                                 ))}
                                             </tr>
                                         </thead>
