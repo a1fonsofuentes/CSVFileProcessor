@@ -478,7 +478,7 @@ def linear_regression(years):
     total_sales = np.sum(y_pred)
     plt.text(6, 800000, f'Predicted Total Sales: ${int(total_sales):,}', fontsize=12, color='blue')
 
-    plt.scatter(combined_months, y, color='blue', label='Sales Data', s=80)
+    plt.scatter(combined_months, y, color='#50b3e5', label='Sales Data', s=80)
     plt.plot(combined_months, y_pred, label='Regression Line', color='red', linewidth=1.5)
 
     plt.xlabel('Month', fontsize=14)

@@ -63,20 +63,29 @@ const Dashboard = () => {
                 const controllerId = controllerResponse.data[0].id;
                 for (let rowIndex = 1; rowIndex < processedArray.length; rowIndex++) {
                     const row = processedArray[rowIndex]; // Use row directly
-
+                    // Convert empty strings to null where necessary
+                    const year = row[0] !== '' ? row[0] : null;
+                    const month = row[1] !== '' ? row[1] : null;
+                    const total_tipo_venta = row[2] !== '' ? row[2] : null;
+                    const producto = row[3] !== '' ? row[3] : null;
+                    const cuenta = row[4] !== '' ? row[4] : null;
+                    const monto_facturacion = row[5] !== '' ? parseFloat(row[5]) : null;
+                    const costo_detalle_facturacion = row[6] !== '' ? parseFloat(row[6]) : null;
+                    const utilidad = row[7] !== '' ? parseFloat(row[7]) : null;
+                    const margin = row[8] !== '' ? parseFloat(row[8]) : null;
                     const { data, error } = await supabase
                         .from('data')
                         .insert([
                             {
-                                year: row[0],
-                                month: row[1],
-                                total_tipo_venta: row[2],
-                                producto: row[3],
-                                cuenta: row[4],
-                                monto_facturacion: row[5],
-                                costo_detalle_facturacion: row[6],
-                                utilidad: row[7],
-                                margin: row[8],
+                                year,
+                                month,
+                                total_tipo_venta,
+                                producto,
+                                cuenta,
+                                monto_facturacion,
+                                costo_detalle_facturacion,
+                                utilidad,
+                                margin,
                                 upload: controllerId
                             },
                         ]);
