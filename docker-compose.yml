@@ -1,0 +1,12 @@
+version: '3'
+include:
+  - supabase/docker/docker-compose.yml
+
+services:
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "8000:8000"
+
+    
