@@ -1,36 +1,36 @@
 import React, { useState } from 'react';
-import { loginUser } from "../api";
 import { Container, Card, Form, Button, Image, Stack } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import { environment } from '../Environment';
+import axios from 'axios';
 
-const Login = () => {
+const SignUp = () => {
     const [loggedIn, setLoggedIn] = useState(false);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
 
-    const handleLogin = async () => {
+    const handleRegister = async () => {
         try {
-            // Check if both username and password are provided
-            if (!username || !password) {
-                alert("Please enter both username and password.");
-                return;
-            }
-
-            // Call the loginUser function with the provided credentials
-            const response = await loginUser(username, password);
-
-            if (response.status === 200) {
-                // Set the logged-in state to true if login is successful
+            const response = await axios.post(`${environment.apiBaseUrl}/signup`, {
+                username: username,
+                password: password,
+            });
+    
+            // Assuming your API returns an access token upon successful registration
+            if (response.data.access_token) {
+                // You can store the token in local storage or a state management solution like Redux
+                localStorage.setItem('access_token', response.data.access_token);
                 setLoggedIn(true);
-                alert("Login successful. You can now use the file processing tool.");
-                navigate("/dashboard");
+    
+                // Redirect the user to a different page or perform any other actions you need
+                navigate('/dashboard'); // Import 'navigate' from 'react-router-dom'
             } else {
-                // If login is unsuccessful, show an error message
-                alert("Login failed. Please check your username and password.");
+                console.error('Error during registration:', error);
             }
         } catch (error) {
-            console.error(error);
+            // Handle network errors or server errors
+            console.error('Error during registration:', error);
         }
     };
 
@@ -87,7 +87,7 @@ const Login = () => {
                             <Image src="https://app.camiapp.net/assets/Logo-8a7d2727.svg" width={"35%"} rounded />
                         </Stack>
                         <br />
-                        Log In
+                        Sign Up
                     </Card.Title>
                     <Form.Group>
                         <Form.Label style={styles.formLabel}>Email</Form.Label>
@@ -107,12 +107,7 @@ const Login = () => {
                             style={styles.formInput}
                         />
                     </Form.Group>
-                    <Button variant="primary" onClick={handleLogin} style={styles.loginButton}>
-                        Log In
-                    </Button>
-                    <br />
-                    <br />
-                    <Button name='singup' variant="secundary" onClick={navigate("/register")} style={styles.loginButton}>
+                    <Button variant="primary" onClick={handleRegister} style={styles.loginButton}>
                         Sign Up
                     </Button>
                 </Card.Body>
@@ -121,4 +116,4 @@ const Login = () => {
     );
 };
 
-export default Login;
+export default SignUp;

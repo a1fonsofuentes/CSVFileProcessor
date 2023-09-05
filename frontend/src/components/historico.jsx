@@ -13,7 +13,7 @@ const Historico = () => {
         document.title = 'Camilytics - CSV historial';
         async function fetchData() {
             try {
-                const response = await axios.get('http://localhost:8000/data'); // Change the URL to match your backend endpoint
+                const response = await axios.get(environment.urlApi+'data'); // Change the URL to match your backend endpoint
                 if (response.data.processedData) {
                     const uploads = response.data.processedData.map(upload => ({
                         uploadDate: upload.uploadDate,

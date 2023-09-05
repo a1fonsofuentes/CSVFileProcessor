@@ -37,6 +37,7 @@ const monthNames = {
   11: 'Noviembre',
   12: 'Diciembre'
 };
+import { environment } from '../Environment';
 
 const colors = ['#818282', '#5069E5', '#50b3e5', '#FFCF44', '#387DA0', '#FFD55B', '#61BAE7', '#ffc416', '#E5CD50'];
 
@@ -55,7 +56,7 @@ const Analitics = () => {
   const fetchGraphs = async () => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/get_total_facturacion');
+        const response = await axios.get(environment.urlApi+'get_total_facturacion');
         setData(response.data);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -63,7 +64,7 @@ const Analitics = () => {
     };
     const fetchAnualSales = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/get_anual_sales_line_graph');
+        const response = await axios.get(environment.urlApi+'get_anual_sales_line_graph');
         setAnualSales(response.data);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -71,7 +72,7 @@ const Analitics = () => {
     };
     const fetchOportunidad = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/get_producto_oportunidad');
+        const response = await axios.get(environment.urlApi+'get_producto_oportunidad');
         setOportunidad(response.data.producto_oportunidad);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -79,7 +80,7 @@ const Analitics = () => {
     };
     const fetchOportunidad1 = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/get_oportunidad_anual');
+        const response = await axios.get(environment.urlApi+'get_oportunidad_anual');
         setOportunidad1(response.data);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -87,7 +88,7 @@ const Analitics = () => {
     };
     const fetchClientes = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/get_clientes');
+        const response = await axios.get(environment.urlApi+'get_clientes');
         setClientes(response.data.clientes);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -95,7 +96,7 @@ const Analitics = () => {
     };
     const fetchAvailableYears = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/get_available_years');
+        const response = await axios.get(environment.urlApi+'get_available_years');
         setAvailableYears(response.data.availableYears.filter((year) => year !== '' && year !== null));
       } catch (error) {
         console.error('Error fetching available years:', error);
@@ -287,7 +288,7 @@ const Analitics = () => {
             Analytics
           </Card.Title>
           <Card.Subtitle>
-            <YearSelector selectedYear={selectedYear} onSelectYear={setSelectedYear} availableYears={availableYears} post={'http://localhost:8000/update_highest_id?selected_year='} />
+            <YearSelector selectedYear={selectedYear} onSelectYear={setSelectedYear} availableYears={availableYears} post={environment.urlApi+'update_highest_id?selected_year='} />
             <br />
           </Card.Subtitle>
           <Card.Text>
@@ -304,7 +305,7 @@ const Analitics = () => {
                         <Col></Col>
                         <Col>
                           Comparar:
-                          <YearSelector selectedYear={selectedYearComparison} onSelectYear={setSelectedYearComparison} availableYears={availableYears} post={'http://localhost:8000/get_comparison_sales?selected_year='} onComparisonDataReceived={handleComparisonDataReceived} />
+                          <YearSelector selectedYear={selectedYearComparison} onSelectYear={setSelectedYearComparison} availableYears={availableYears} post={environment.urlApi+'get_comparison_sales?selected_year='} onComparisonDataReceived={handleComparisonDataReceived} />
                         </Col>
                       </Row>
                     </Container>
@@ -583,7 +584,7 @@ const Analitics = () => {
               </Card.Title>
               <Card.Text>
                 <img
-                  src={`http://localhost:8000/get_lineal_regresion_image`}
+                  src={environment.urlApi+`get_lineal_regresion_image`}
                   alt="Lineal Regresion"
                   style={{ width: '90%' }}
                 />

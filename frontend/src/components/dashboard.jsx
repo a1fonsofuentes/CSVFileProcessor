@@ -5,7 +5,6 @@ import { Container, Card, Form, Button, Image, Col, Row, Stack, Table, Nav, Acco
 import Spinner from 'react-bootstrap/Spinner';
 import Historico from './historico';
 import Analitics from './analitics';
-import supabase from './db';
 import background from '../imgs/background.jpg'
 
 
@@ -45,77 +44,6 @@ const Dashboard = () => {
                 processedArray = response.data.split("\n").map(row => row.split(","));
                 setProcessedData(processedArray);
                 setDataProcessed(true);
-            }
-            const controllerResponse = await supabase
-                .from('controller')
-                .insert([{}]).select();
-            if (controllerResponse.error) {
-                console.error('Error inserting row:', error);
-                toast.error(error, {
-                    position: toast.POSITION.TOP_RIGHT,
-                    autoClose: 3000, //3 seconds
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    transition: Bounce
-                });
-            } else {
-                const controllerId = controllerResponse.data[0].id;
-                for (let rowIndex = 1; rowIndex < processedArray.length; rowIndex++) {
-                    const row = processedArray[rowIndex]; // Use row directly
-                    // Convert empty strings to null where necessary
-                    const year = row[0] !== '' ? row[0] : null;
-                    const month = row[1] !== '' ? row[1] : null;
-                    const total_tipo_venta = row[2] !== '' ? row[2] : null;
-                    const producto = row[3] !== '' ? row[3] : null;
-                    const cuenta = row[4] !== '' ? row[4] : null;
-                    const monto_facturacion = row[5] !== '' ? parseFloat(row[5]) : null;
-                    const costo_detalle_facturacion = row[6] !== '' ? parseFloat(row[6]) : null;
-                    const utilidad = row[7] !== '' ? parseFloat(row[7]) : null;
-                    const margin = row[8] !== '' ? parseFloat(row[8]) : null;
-                    const { data, error } = await supabase
-                        .from('data')
-                        .insert([
-                            {
-                                year,
-                                month,
-                                total_tipo_venta,
-                                producto,
-                                cuenta,
-                                monto_facturacion,
-                                costo_detalle_facturacion,
-                                utilidad,
-                                margin,
-                                upload: controllerId
-                            },
-                        ]);
-
-                    if (error) {
-                        console.error('Error inserting row:', error);
-                        toast.update('toast', {
-                            render: error,
-                            type: toast.TYPE.ERROR,
-                            position: toast.POSITION.TOP_RIGHT,
-                            autoClose: 3000, //3 seconds
-                            hideProgressBar: false,
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                            transition: Bounce
-                        });
-                    } else {
-                        setNav('default')
-                        toast.update('toast', {
-                            render: 'success',
-                            type: toast.TYPE.SUCCESS,
-                            position: toast.POSITION.TOP_RIGHT,
-                            autoClose: 3000, //3 seconds
-                            hideProgressBar: false,
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                            transition: Slide
-                        });
-                    }
-                }
             }
         } catch (error) {
             toast.error(error, {

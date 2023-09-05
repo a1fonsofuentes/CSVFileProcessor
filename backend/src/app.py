@@ -29,6 +29,9 @@ supabase = create_client(url, key)
 origins = [
     "http://localhost:5173",
 ]
+class UserRegistration(BaseModel):
+    username: str
+    password: str
 
 app.add_middleware(
     CORSMiddleware,
@@ -95,6 +98,29 @@ def login(credentials: HTTPBasicCredentials = Depends(security)):
     if not pwd_context.verify(user_password, stored_hashed_password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
+    token = jwt.encode({"sub": user_name}, SECRET_KEY, algorithm="HS256")
+    return {"access_token": token, "token_type": "bearer"}
+
+@app.post("/signup")
+async def signup(user_data: UserRegistration):
+    user_name = user_data.username
+    user_password = user_data.password
+
+    # Check if the user already exists
+    existing_user = await supabase.table("users").select("*").eq("username", user_name).limit(1).execute()
+
+    if existing_user.error or existing_user.data:
+        raise HTTPException(status_code=400, detail="User already exists")
+
+    # Hash the password before storing it
+    hashed_password = pwd_context.hash(user_password)
+
+    # Insert the user into the users table
+    user_insert = await supabase.table("users").insert([{"username": user_name, "hashedpassword": hashed_password}]).execute()
+
+    if user_insert.error:
+        raise HTTPException(status_code=500, detail="User registration failed")
+    # Generate and return an access token
     token = jwt.encode({"sub": user_name}, SECRET_KEY, algorithm="HS256")
     return {"access_token": token, "token_type": "bearer"}
 
@@ -223,6 +249,13 @@ def process_csv(file_content: bytes = File(...)):
     processed_csv_data = processed_data_buffer.getvalue()
     processed_data_buffer.close()
 
+    data_to_insert = final_df.to_dict(orient='records')
+
+    # Upload the data to the 'data' table
+    response, error = supabase.table('data').upsert(data_to_insert, returning='minimal')
+
+    if error:
+        return {"error": "Failed to insert data into the 'data' table."}
     return processed_csv_data
 
 @app.post("/upload/")
