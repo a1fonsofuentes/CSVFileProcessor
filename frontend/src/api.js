@@ -3,7 +3,7 @@ import { environment } from "./Environment";
 const BASE_URL = environment.urlApi; // Replace with your FastAPI backend URL
 
 export async function uploadFile(formData) {
-  return await axios.post(`${BASE_URL}/upload/`, formData, {
+  return await axios.post(`${BASE_URL}upload/`, formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
@@ -11,7 +11,7 @@ export async function uploadFile(formData) {
 }
 
 export async function processFile(fileData) {
-  return await axios.post(`${BASE_URL}/process/`, fileData, {
+  return await axios.post(`${BASE_URL}process/`, fileData, {
     responseType: "blob",
   });
 }
@@ -20,7 +20,7 @@ export async function loginUser(username, password) {
   const credentials = `${username}:${password}`;
   const encodedCredentials = btoa(credentials); // Base64 encode the credentials
 
-  const response = await fetch(`${BASE_URL}/login`, {
+  const response = await fetch(`${BASE_URL}login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

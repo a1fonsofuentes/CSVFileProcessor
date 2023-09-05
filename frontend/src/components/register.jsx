@@ -12,7 +12,7 @@ const SignUp = () => {
 
     const handleRegister = async () => {
         try {
-            const response = await axios.post(`${environment.apiBaseUrl}/signup`, {
+            const response = await axios.post(`${environment.urlApi}signup`, {
                 username: username,
                 password: password,
             });

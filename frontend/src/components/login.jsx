@@ -112,7 +112,7 @@ const Login = () => {
                     </Button>
                     <br />
                     <br />
-                    <Button name='singup' variant="secundary" onClick={navigate("/register")} style={styles.loginButton}>
+                    <Button name='singup' variant="secundary" onClick={() => navigate("/register")} style={styles.loginButton}>
                         Sign Up
                     </Button>
                 </Card.Body>
