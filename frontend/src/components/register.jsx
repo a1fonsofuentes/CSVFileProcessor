@@ -17,19 +17,15 @@ const SignUp = () => {
                 password: password,
             });
     
-            // Assuming your API returns an access token upon successful registration
             if (response.data.access_token) {
-                // You can store the token in local storage or a state management solution like Redux
                 localStorage.setItem('access_token', response.data.access_token);
                 setLoggedIn(true);
     
-                // Redirect the user to a different page or perform any other actions you need
-                navigate('/dashboard'); // Import 'navigate' from 'react-router-dom'
+                navigate('/dashboard');
             } else {
                 console.error('Error during registration:', error);
             }
         } catch (error) {
-            // Handle network errors or server errors
             console.error('Error during registration:', error);
         }
     };

@@ -105,22 +105,18 @@ def login(credentials: HTTPBasicCredentials = Depends(security)):
 async def signup(user_data: UserRegistration):
     user_name = user_data.username
     user_password = user_data.password
-
-    # Check if the user already exists
     existing_user = await supabase.table("users").select("*").eq("username", user_name).limit(1).execute()
 
     if existing_user.error or existing_user.data:
         raise HTTPException(status_code=400, detail="User already exists")
-
-    # Hash the password before storing it
+    
     hashed_password = pwd_context.hash(user_password)
 
-    # Insert the user into the users table
     user_insert = await supabase.table("users").insert([{"username": user_name, "hashedpassword": hashed_password}]).execute()
 
     if user_insert.error:
         raise HTTPException(status_code=500, detail="User registration failed")
-    # Generate and return an access token
+
     token = jwt.encode({"sub": user_name}, SECRET_KEY, algorithm="HS256")
     return {"access_token": token, "token_type": "bearer"}
 
