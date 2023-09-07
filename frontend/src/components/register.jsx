@@ -12,21 +12,27 @@ const SignUp = () => {
 
     const handleRegister = async () => {
         try {
-            const response = await axios.post(`${environment.urlApi}signup`, {
+            const userData = {
                 username: username,
                 password: password,
-            });
-    
+            };
+            const response = await axios.post(`${environment.urlApi}signup`, userData,);
+            console.log(response)
             if (response.data.access_token) {
                 localStorage.setItem('access_token', response.data.access_token);
                 setLoggedIn(true);
-    
-                navigate('/dashboard');
-            } else {
-                console.error('Error during registration:', error);
+                alert("Register successful. You can now login.");
+                navigate('/');
+            } else if (response.data.status_code === 400) {
+                // User already exists (handled by the server)
+                alert("User already exists. Please choose a different username.");
+            }else {
+                console.error('Error during registration:', response.data.details);
+                alert("Register failed. Please try again later.");
             }
         } catch (error) {
-            console.error('Error during registration:', error);
+            console.error('Error during registration:', error.message);
+
         }
     };
 

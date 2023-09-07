@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Form, Col, Row, Accordion, Spinner, Table } from 'react-bootstrap';
 import axios from 'axios'; // Import axios for making HTTP requests
-
+import { environment } from '../Environment';
 const Historico = () => {
     const [uploadData, setUploadData] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -54,7 +54,6 @@ const Historico = () => {
                                 ))}
                             </Form.Select>
                             <br />
-                            {console.log(filteredData)}
                             {filteredData.map((upload) => (
                                 upload.data.length > 0 && (<Accordion>
                                     <Accordion.Item key={upload.uploadDate} eventKey={upload.uploadDate}>

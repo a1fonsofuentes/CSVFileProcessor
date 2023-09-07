@@ -29,9 +29,6 @@ supabase = create_client(url, key)
 origins = [
     "http://localhost:5173",
 ]
-class UserRegistration(BaseModel):
-    username: str
-    password: str
 
 app.add_middleware(
     CORSMiddleware,
@@ -46,25 +43,27 @@ SECRET_KEY = "your_secret_key"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
-highest_id_response = supabase.from_('data').select('upload').eq('year', '2.023').order('upload', desc=True).limit(1).execute()
-highest_id = highest_id_response.data[0]['upload']
-highest_id_response22 = supabase.from_('data').select('upload').eq('year', '2.022').order('upload', desc=True).limit(1).execute()
-highest_id22 = highest_id_response22.data[0]['upload']
-highest_id_response23 = supabase.from_('data').select('upload').eq('year', '2.023').order('upload', desc=True).limit(1).execute()
-highest_id23 = highest_id_response.data[0]['upload']
-
 response = supabase.from_("data").select("year").execute()
 available_years = [row["year"] for row in response.data]
 unique_years_set = set(available_years)
 unique_years_list = list(unique_years_set)
-
+unique_years_list = [year for year in unique_years_list if year is not None]
+cleaned_years = [int(year.replace('.', '')) for year in unique_years_list if year and year.strip() != '']
+if cleaned_years:
+    latest_year = max(cleaned_years)
+    number_str = str(latest_year)
+    index_of_zero = number_str.find('0')
+    if index_of_zero != -1 and index_of_zero != len(number_str) - 1:
+        latest_year_str = number_str[:index_of_zero] + '.' + number_str[index_of_zero:]
+else:
+    latest_year_str = None
+highest_id_response = supabase.from_('data').select('upload').eq('year', latest_year_str).order('upload', desc=True).limit(1).execute()
+highest_id = highest_id_response.data[0]['upload']
 
 response = supabase.from_('data').select('producto').eq('upload', highest_id).limit(1000).execute()
 data = response.data
 all_products = [item['producto'] for item in data if item['producto'] != None and item['producto'] != '']
 productos = list(set(all_products))
-
-
 
 security = HTTPBasic()
 
@@ -77,7 +76,6 @@ router = APIRouter()
 
 @app.post("/update_highest_id")
 async def update_highest_id(selected_year: str):
-    print(f"Received selected_year: {selected_year}")
     global highest_id, highest_id_response
     highest_id_response = supabase.from_('data').select('upload').eq('year', selected_year).order('upload', desc=True).limit(1).execute()
     highest_id = highest_id_response.data[0]['upload']
@@ -102,19 +100,24 @@ def login(credentials: HTTPBasicCredentials = Depends(security)):
     return {"access_token": token, "token_type": "bearer"}
 
 @app.post("/signup")
-async def signup(user_data: UserRegistration):
-    user_name = user_data.username
-    user_password = user_data.password
-    existing_user = await supabase.table("users").select("*").eq("username", user_name).limit(1).execute()
+async def signup(user_data: dict):
+    user_name = user_data.get('username')
+    user_password = user_data.get('password')
+    existing_user_response = supabase.table("users").select("*").eq("username", user_name).limit(1).execute()
 
-    if existing_user.error or existing_user.data:
-        raise HTTPException(status_code=400, detail="User already exists")
+    # Check if the response has an error attribute or equivalent
+    if hasattr(existing_user_response, 'error') and existing_user_response.error:
+        return HTTPException(status_code=400, detail="User already exists")
+
+    # Check if any data was returned (user with that username already exists)
+    if existing_user_response.data:
+        return HTTPException(status_code=400, detail="User already exists")
     
     hashed_password = pwd_context.hash(user_password)
 
-    user_insert = await supabase.table("users").insert([{"username": user_name, "hashedpassword": hashed_password}]).execute()
+    user_insert = supabase.table("users").insert([{"username": user_name, "hashedpassword": hashed_password}]).execute()
 
-    if user_insert.error:
+    if hasattr(user_insert, 'status_code') and user_insert.status_code != 200:
         raise HTTPException(status_code=500, detail="User registration failed")
 
     token = jwt.encode({"sub": user_name}, SECRET_KEY, algorithm="HS256")
@@ -236,7 +239,6 @@ def process_csv(file_content: bytes = File(...)):
 
     year = final_df.loc[0, 'Año']
     final_df['Año'] = year
-    print(final_df.head())
 
     # Instead of using io.BytesIO, we use io.StringIO for CSV processing
     processed_data_buffer = io.StringIO()
@@ -248,9 +250,9 @@ def process_csv(file_content: bytes = File(...)):
     data_to_insert = final_df.to_dict(orient='records')
 
     # Upload the data to the 'data' table
-    response, error = supabase.table('data').upsert(data_to_insert, returning='minimal')
+    response = supabase.table('data').upsert(data_to_insert, returning='minimal')
 
-    if error:
+    if isinstance(response, dict) and 'error' in response:
         return {"error": "Failed to insert data into the 'data' table."}
     return processed_csv_data
 
@@ -363,7 +365,6 @@ async def get_total_facturacion_endpoint():
 
 def supabase_queries():
     data = supabase.table('data').select('*').execute()
-    print(data)
 
 @app.post("/get_comparison_sales")
 async def fetch_comparison_data(selected_year: str):
@@ -453,9 +454,6 @@ async def get_available_years():
 
 @app.get("/get_lineal_regresion_image")
 async def get_lineal_regresion_image():
-    value_to_remove = ''
-    regression_years = unique_years_list.remove(value_to_remove)
-    print(unique_years_list)
     image_path = linear_regression(unique_years_list)
     # Check if the image file exists
     if os.path.exists(image_path):
@@ -471,7 +469,9 @@ def linear_regression(years):
     combined_months = []
 
     for year in years:
-        highest_id_response = supabase.from_('data').select('upload').eq('year', str(year)).order('upload', desc=True).limit(1).execute()
+        if not year or len(year) < 4:
+            continue
+        highest_id_response = supabase.from_('data').select('upload').eq('year', year).order('upload', desc=True).limit(1).execute()
         highest_id = highest_id_response.data[0]['upload']
 
         response = supabase.from_('data').select('monto_facturacion').eq('upload', highest_id).eq('total_tipo_venta', '– TOTAL DEL MES – ').limit(1000).execute()
@@ -479,15 +479,26 @@ def linear_regression(years):
         df = pd.DataFrame(data)
         
         year_sales = df['monto_facturacion'].tolist()
-        print(year_sales)
         months = np.arange(1, 13)
         
         combined_sales.extend(year_sales)  # Extend the sales data list
         combined_months.extend(months)     # Extend the months list for each year
-        
-        print(f"Year: {year}, Sales Length: {len(year_sales)}, Months Length: {len(months)}")
 
-    print(f"Combined Sales Length: {len(combined_sales)}, Combined Months Length: {len(combined_months)}")
+     # Create a DataFrame with the complete set of months
+    complete_months = pd.DataFrame({'Month': np.arange(1, 13)})
+
+    # Create a DataFrame with the combined sales data
+    sales_data = pd.DataFrame({'Month': combined_months, 'Sales': combined_sales})
+
+    # Merge the two DataFrames to fill in missing values using interpolation
+    merged_data = complete_months.merge(sales_data, on='Month', how='left')
+
+    # Interpolate missing sales values
+    merged_data['Sales'] = merged_data['Sales'].interpolate()
+
+    # Extract interpolated sales values and months as numpy arrays
+    X = merged_data['Month'].values.reshape(-1, 1)
+    y = merged_data['Sales'].values
 
     model = LinearRegression()
 
@@ -522,7 +533,6 @@ def linear_regression(years):
 
     image_path = "linear_regression_sales.png"
     plt.savefig(image_path)
-
 
     return image_path
 
@@ -581,7 +591,6 @@ def clientes():
 
 @app.get("/get_oportunidad_anual")
 async def get_oportunidad_anual():
-    print('hello')
     try:
         oportunidad_data = producto_oportunidad1()
         return {"data": oportunidad_data}
